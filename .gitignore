@@ -1,0 +1,25 @@
+# 依赖
+node_modules/
+dist/
+dist-ssr/
+
+# 日志
+*.log
+npm-debug.log*
+
+# 编辑器
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 生成的角色卡清单（由 build-manifest 脚本自动生成，不入库）
+public/data/manifest.json
+
+# TypeScript 构建缓存
+*.tsbuildinfo

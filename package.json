@@ -1,0 +1,23 @@
+{
+  "name": "open-character-cards",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "开源角色卡共享平台 —— 角色卡以文件形式存进 Git，人人可投稿共建",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "build:manifest": "node tools/build-manifest.mjs"
+  },
+  "dependencies": {
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "sass": "^1.83.0",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.5",
+    "vue-tsc": "^2.2.0"
+  }
+}

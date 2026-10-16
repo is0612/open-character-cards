@@ -1,0 +1,47 @@
+name: 角色卡投稿
+description: 提交一张新的角色卡（上传一张 SillyTavern 格式的 PNG 即可）
+title: "[角色卡] 角色名"
+labels: ["card-submission"]
+body:
+  - type: textarea
+    id: png
+    attributes:
+      label: 角色卡 PNG
+      description: 上传你的角色卡 PNG（SillyTavern 格式，角色数据内嵌在图片里）。直接拖拽图片附件即可，不要只贴聊天分享链接。
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: 角色名
+      description: 用于列表展示（PNG 里已有名字，这里确认一下即可）
+      placeholder: 例如：旅人
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: 一句话简介
+      description: 在列表页展示的简介（可选）
+  - type: textarea
+    id: tags
+    attributes:
+      label: 标签（可选）
+      description: 用逗号分隔，例如「奇幻, 佣兵, 沉默寡言」
+      placeholder: 奇幻, 佣兵
+  - type: input
+    id: author
+    attributes:
+      label: 投稿者 / 作者
+      description: 你的名字或昵称（用于署名）
+  - type: input
+    id: world
+    attributes:
+      label: 所属世界观（可选）
+      placeholder: 例如：某个奇幻世界
+  - type: input
+    id: license
+    attributes:
+      label: 授权协议（可选）
+      description: 默认 CC BY-SA 4.0，如有特殊要求请说明
+      placeholder: CC BY-SA 4.0
