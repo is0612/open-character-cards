@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import type { ManifestCard } from './types/card'
 import CardGrid from './components/CardGrid.vue'
 import CardDetail from './components/CardDetail.vue'
+import CardTool from './components/CardTool.vue'
 
 const REPO_URL = 'https://github.com/is0612/open-character-cards'
 
@@ -20,6 +21,7 @@ const navItems = [
   { href: '#usage', label: '如何使用' },
   { href: '#contribute', label: '如何投稿' },
   { href: '#gallery', label: '角色卡画廊' },
+  { href: '#tool', label: '卡牌工具' },
   { href: '#faq', label: '常见问题' },
 ]
 
@@ -246,11 +248,22 @@ onMounted(loadCards)
       </div>
     </section>
 
+    <!-- 卡牌工具 -->
+    <section id="tool" class="section">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-index">05</span>
+          <h2 class="section-title">卡牌工具</h2>
+        </div>
+        <CardTool />
+      </div>
+    </section>
+
     <!-- FAQ -->
     <section id="faq" class="section">
       <div class="section-inner section-inner--narrow">
         <div class="section-head">
-          <span class="section-index">05</span>
+          <span class="section-index">06</span>
           <h2 class="section-title">常见问题</h2>
         </div>
         <div class="faq-list">
