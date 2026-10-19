@@ -1,30 +1,25 @@
 // ============================================
-// Open Character Cards — 设计系统（Design Tokens）
-// 主题：酒馆感（木质 / 烛光 / 羊皮纸）
+// Open Character Cards — Moonlit Archive Design Tokens
+// 主题：星夜档案馆 / 午夜蓝、月光蓝与暖金
 // ============================================
 
-// —— 色彩 ——
-// 背景：暖米黄羊皮纸，衬托卡片
-$color-bg: #f5f0e6;
-$color-surface: #fffdf8;
-$color-border: #e4dac5;
+// 色彩
+$color-bg: #0b1225;
+$color-surface: #111c34;
+$color-border: #2a3858;
 
-// 文字：暖调深棕
-$color-text: #2f261d;
-$color-text-muted: #857a69;
+$color-text: #edf3ff;
+$color-text-muted: #98a9ca;
 
-// 主色：深棕木色（导航/Logo/步骤/页脚）
-$color-primary: #4a3628;
-$color-primary-soft: #ece0d0;
+$color-primary: #1b2d4f;
+$color-primary-soft: #24395f;
 
-// 强调色：烛光琥珀橙（CTA、投稿入口）
-$color-accent: #c9762b;
-$color-accent-soft: #f8e7d2;
+$color-accent: #a9c4ff;
+$color-accent-soft: #202f50;
 
-// 成功色
-$color-success: #4a7a52;
+$color-success: #8fd8b0;
 
-// —— 字体 ——
+// 字体
 $font-sans: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, -apple-system, sans-serif;
 
 // 字阶
@@ -35,15 +30,15 @@ $fs-body: 15px;
 $fs-muted: 13px;
 $fs-small: 12px;
 
-// —— 圆角 / 阴影 ——
+// 圆角 / 阴影
 $radius-sm: 8px;
 $radius: 12px;
 $radius-lg: 16px;
 
-$shadow-sm: 0 1px 2px rgba(47, 38, 29, 0.05);
-$shadow-md: 0 6px 20px rgba(47, 38, 29, 0.10);
-$shadow-lg: 0 12px 36px rgba(47, 38, 29, 0.18);
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.16);
+$shadow-md: 0 8px 24px rgba(0, 0, 0, 0.22);
+$shadow-lg: 0 16px 44px rgba(0, 0, 0, 0.3);
 
-// —— 布局 ——
-$max-width: 1200px;
-$gutter: 40px;
+// 布局
+$max-width: 1240px;
+$gutter: 28px;
