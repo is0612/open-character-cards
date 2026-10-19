@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # 供 ingest 工作流在把角色卡直接推上 main 后调用（GITHUB_TOKEN 的 push 不会触发新 workflow）
+  workflow_call:
 
 permissions:
   contents: read

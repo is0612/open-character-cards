@@ -1,0 +1,69 @@
+name: Remove Card
+
+# 在网页上快捷下架一张角色卡：Actions → Remove Card → Run workflow → 填卡片名
+# 只有对该仓库有写权限的人才能触发，所以天然避免了「谁都能删卡」
+on:
+  workflow_dispatch:
+    inputs:
+      card:
+        description: 卡片名（cards/ 下的文件名，不含 .png）
+        required: true
+        type: string
+
+concurrency:
+  group: remove-card
+  cancel-in-progress: false
+
+jobs:
+  remove:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: 删除卡片文件
+        env:
+          CARD: ${{ inputs.card }}
+        run: |
+          set -euo pipefail
+          NAME="$(printf '%s' "$CARD" | sed 's/^ *//;s/ *$//')"
+          if [ -z "$NAME" ] || printf '%s' "$NAME" | grep -qE '[/\\]|\.\.'; then
+            echo "::error::卡片名不合法：$CARD"
+            exit 1
+          fi
+
+          FOUND=0
+          for f in "cards/$NAME.png" "cards/$NAME.meta.json"; do
+            if [ -f "$f" ]; then
+              git rm --quiet "$f"
+              echo "已删除 $f"
+              FOUND=1
+            fi
+          done
+
+          if [ "$FOUND" = "0" ]; then
+            echo "::error::cards/ 下没有「$NAME」这张卡，检查一下文件名"
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "下架角色卡：$NAME"
+          git push origin HEAD:main
+
+      - name: 结果摘要
+        if: success()
+        run: |
+          echo "### 已下架「${{ inputs.card }}」" >> "$GITHUB_STEP_SUMMARY"
+          echo "部署完成后（约 1 分钟）网站不再展示这张卡。" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: remove
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy.yml

@@ -1,0 +1,192 @@
+name: Ingest Card Issue
+
+# 社区域投稿：机器校验通过 → 直接进 main 并部署（立刻可见）
+#             校验不通过 → 推到 cards/issue-N 分支开 PR，等人工判断
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 要导入的 Issue 编号
+        required: true
+        type: string
+
+concurrency:
+  group: ingest-card-issue-${{ github.event.issue.number || inputs.issue_number }}
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    # 只处理用了「角色卡投稿」模板的 Issue（正文里必然有「角色卡 PNG」一栏）
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.issue.body, '### 角色卡 PNG')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    outputs:
+      mode: ${{ steps.check.outputs.mode }}
+      number: ${{ steps.meta.outputs.number }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - id: meta
+        name: 解析 Issue 编号
+        run: |
+          NUMBER="${{ inputs.issue_number || github.event.issue.number }}"
+          echo "number=$NUMBER" >> "$GITHUB_OUTPUT"
+          echo "branch=cards/issue-$NUMBER" >> "$GITHUB_OUTPUT"
+
+      - id: ingest
+        name: 下载附件并写入 cards/
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node tools/ingest-issue.mjs "${{ steps.meta.outputs.number }}" --result "$RUNNER_TEMP/result.json"
+
+      - id: check
+        name: 读取机器校验结果
+        env:
+          RESULT: ${{ runner.temp }}/result.json
+        run: |
+          node -e '
+          const fs = require("fs");
+          const r = JSON.parse(fs.readFileSync(process.env.RESULT, "utf8"));
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `mode=${r.ok ? "publish" : "review"}\n`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `reason=${(r.reason || "").replace(/\n/g, " ")}\n`);
+          '
+
+      - name: 生成 PR 描述
+        if: steps.check.outputs.mode == 'review'
+        env:
+          ISSUE: ${{ steps.meta.outputs.number }}
+          META: cards/${{ steps.ingest.outputs.name }}.meta.json
+          SOURCE: ${{ steps.ingest.outputs.source }}
+          REASON: ${{ steps.check.outputs.reason }}
+        run: |
+          node -e '
+          const fs = require("fs");
+          const m = JSON.parse(fs.readFileSync(process.env.META, "utf8"));
+          const src = process.env.SOURCE || "";
+          const row = (k, v) => `| ${k} | ${v || "—"} |`;
+          const head = src ? [`![${m.name}](${src})`, ""] : ["（本地导入，无原图链接）", ""];
+          const body = [
+            ...head,
+            `由「Ingest Card Issue」机器人自动导入自 #${process.env.ISSUE}。`,
+            "",
+            `> **机器校验未通过**：${process.env.REASON}`,
+            "> 这张卡没有直接上线，需要人工确认后合并。",
+            "",
+            "| 字段 | 值 |",
+            "| --- | --- |",
+            row("角色名", m.name),
+            row("简介", m.summary),
+            row("标签", (m.tags || []).join("、")),
+            row("作者", m.author),
+            row("世界观", m.world),
+            row("协议", m.license),
+            "",
+            "合并后会自动部署上线；关闭这个 PR 则该投稿不会入库。",
+            "",
+            `Closes #${process.env.ISSUE}`,
+          ].join("\n");
+          fs.writeFileSync(process.env.RUNNER_TEMP + "/pr-body.md", body);
+          '
+
+      - name: 提交到 main（校验通过）
+        id: publish
+        if: steps.check.outputs.mode == 'publish'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add cards
+          if git diff --cached --quiet; then
+            echo "没有文件变化，跳过提交"
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "角色卡：${{ steps.ingest.outputs.name }}（Issue #${{ steps.meta.outputs.number }}）"
+          git push origin HEAD:main
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+
+      - name: 推到分支并开 PR（校验未通过）
+        if: steps.check.outputs.mode == 'review'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ steps.meta.outputs.branch }}
+          TITLE: 待审核：${{ steps.ingest.outputs.name }}（Issue #${{ steps.meta.outputs.number }}）
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add cards
+          if git diff --cached --quiet; then
+            echo "没有文件变化" >&2
+            exit 0
+          fi
+          git commit -m "待审核角色卡：${{ steps.ingest.outputs.name }}（Issue #${{ steps.meta.outputs.number }}）"
+          git push --force origin "HEAD:refs/heads/$BRANCH"
+          if [ "$(gh pr list --head "$BRANCH" --json number --jq 'length')" = "0" ]; then
+            gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$RUNNER_TEMP/pr-body.md"
+          else
+            gh pr comment "$BRANCH" --body "已根据 Issue 的最新内容更新本分支。"
+          fi
+          gh pr list --head "$BRANCH" --json url --jq '.[0].url' > "$RUNNER_TEMP/pr-url.txt"
+
+      - name: Issue 回复（已上线）
+        if: github.event_name == 'issues' && steps.check.outputs.mode == 'publish'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const number = Number('${{ steps.meta.outputs.number }}')
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: number,
+              body: '感谢投稿！这张卡已通过机器校验，直接上线了 🎉\n\n约 1 分钟后刷新网站即可在画廊里看到（页面部署有缓存）。',
+            })
+            await github.rest.issues.update({
+              ...context.repo,
+              issue_number: number,
+              state: 'closed',
+              state_reason: 'completed',
+            })
+
+      - name: Issue 回复（待人工审核）
+        if: github.event_name == 'issues' && steps.check.outputs.mode == 'review'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs')
+            const url = fs.readFileSync(process.env.RUNNER_TEMP + '/pr-url.txt', 'utf8').trim()
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: Number('${{ steps.meta.outputs.number }}'),
+              body: `这张卡没有通过机器校验，已转人工审核：${url}\n\n原因：${{ steps.check.outputs.reason }}\n\n维护者合并 PR 后才会正式上线。`,
+            })
+
+      - name: 失败时在 Issue 里说明
+        if: failure() && github.event_name == 'issues'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const number = Number('${{ steps.meta.outputs.number }}')
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: number,
+              body: '自动导入失败了 😢 请确认第一条「角色卡 PNG」里是**直接拖进来的图片附件**（github.com/user-attachments/... 开头的链接），而不是相册/网盘分享链接。\n\n维护者也可以本地运行 `node tools/ingest-issue.mjs ' + number + '` 手动导入。',
+            })
+
+  deploy:
+    needs: ingest
+    if: needs.ingest.outputs.mode == 'publish'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy.yml
