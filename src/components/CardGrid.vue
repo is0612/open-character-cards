@@ -226,12 +226,12 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
   border: 1px solid $color-border;
   border-radius: 14px;
   background: $color-surface;
-  box-shadow: 0 3px 12px rgba(47, 38, 29, 0.035);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.035);
   transition: border-color .18s ease, box-shadow .18s ease;
 
   &:focus-within {
     border-color: $color-accent;
-    box-shadow: 0 0 0 3px rgba(201, 118, 43, .12);
+    box-shadow: 0 0 0 3px rgba(145, 174, 241, .12);
   }
 
   svg {
@@ -254,7 +254,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
     font: inherit;
     font-size: 14px;
 
-    &::placeholder { color: #a59a89; }
+    &::placeholder { color: #8293b4; }
   }
 
   kbd {
@@ -326,7 +326,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
 
   &:hover, &.is-active {
     color: $color-accent;
-    border-color: rgba(201, 118, 43, .5);
+    border-color: rgba(145, 174, 241, .5);
     background: $color-accent-soft;
   }
 
@@ -346,7 +346,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
   padding: 7px 13px;
   border: 1px solid $color-border;
   border-radius: 999px;
-  background: rgba(255, 253, 248, .65);
+  background: rgba(22, 36, 62, .72);
   color: $color-text-muted;
   font: inherit;
   font-size: 12px;
@@ -357,7 +357,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
   &.is-active {
     border-color: $color-primary;
     background: $color-primary;
-    color: #fffaf0;
+    color: #edf3ff;
   }
 }
 
@@ -398,10 +398,10 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
   flex-direction: column;
   overflow: hidden;
   padding: 0;
-  border: 1px solid rgba(115, 85, 54, .18);
+  border: 1px solid rgba(142, 164, 212, .18);
   border-radius: 18px;
   background: $color-surface;
-  box-shadow: 0 4px 18px rgba(47, 38, 29, .055), 0 1px 2px rgba(47, 38, 29, .04);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, .055), 0 1px 2px rgba(0, 0, 0, .04);
   color: inherit;
   text-align: left;
   font-family: inherit;
@@ -410,8 +410,8 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
 
   &:hover {
     transform: translateY(-5px);
-    border-color: rgba(201, 118, 43, .45);
-    box-shadow: 0 18px 38px rgba(47, 38, 29, .14), 0 3px 8px rgba(47, 38, 29, .05);
+    border-color: rgba(145, 174, 241, .45);
+    box-shadow: 0 18px 38px rgba(0, 0, 0, .14), 0 3px 8px rgba(0, 0, 0, .05);
   }
 
   &:focus-visible {
@@ -427,8 +427,8 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
   overflow: hidden;
   aspect-ratio: 3 / 4;
   background:
-    radial-gradient(ellipse at 50% 20%, rgba(255, 255, 255, .7), transparent 55%),
-    linear-gradient(145deg, #e7d8c2, #c5a887);
+    radial-gradient(ellipse at 50% 20%, rgba(169, 196, 255, .16), transparent 55%),
+    linear-gradient(145deg, #2b3d62, #121d35);
   isolation: isolate;
 
   &::after {
@@ -436,7 +436,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
     z-index: 1;
     inset: 45% 0 0;
     content: '';
-    background: linear-gradient(180deg, transparent, rgba(35, 25, 19, .24));
+    background: linear-gradient(180deg, transparent, rgba(0, 5, 16, .58));
     pointer-events: none;
   }
 
@@ -456,7 +456,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  color: rgba(74, 54, 40, .7);
+  color: rgba(210, 222, 248, .72);
 
   span { font-family: Georgia, serif; font-size: 68px; line-height: 1; }
   small { font-size: 8px; letter-spacing: .18em; }
@@ -473,8 +473,8 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
   padding: 5px 8px;
   border: 1px solid rgba(255, 255, 255, .36);
   border-radius: 7px;
-  background: rgba(35, 28, 23, .56);
-  color: #fffaf2;
+  background: rgba(10, 17, 34, .78);
+  color: #edf3ff;
   font-size: 10px;
   letter-spacing: .04em;
   backdrop-filter: blur(8px);
@@ -487,7 +487,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
   z-index: 2;
   right: 12px;
   bottom: 10px;
-  color: rgba(255, 250, 242, .82);
+  color: rgba(237, 243, 255, .82);
   font-family: Georgia, serif;
   font-size: 12px;
   font-style: italic;
@@ -530,10 +530,10 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
 
 .card-tag {
   padding: 3px 7px;
-  border: 1px solid rgba(201, 118, 43, .12);
+  border: 1px solid rgba(145, 174, 241, .12);
   border-radius: 6px;
   background: $color-accent-soft;
-  color: #87501f;
+  color: #cbd9f7;
   font-size: 10px;
 }
 
@@ -546,7 +546,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
   gap: 8px;
   margin-top: 13px;
   padding-top: 10px;
-  border-top: 1px solid rgba(115, 85, 54, .12);
+  border-top: 1px solid rgba(142, 164, 212, .12);
   color: $color-text-muted;
   font-size: 10px;
 
@@ -575,8 +575,8 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
   place-items: center;
   border: 1px solid rgba(255, 255, 255, .55);
   border-radius: 50%;
-  background: rgba(255, 253, 248, .9);
-  color: #6e5b4c;
+  background: rgba(22, 36, 62, .94);
+  color: #bdc9e4;
   box-shadow: 0 3px 12px rgba(28, 21, 16, .12);
   cursor: pointer;
   backdrop-filter: blur(8px);
@@ -584,7 +584,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
 
   svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; }
   &:hover { transform: scale(1.08); }
-  &.is-favorite { color: #b94b45; background: #fff7f4; }
+  &.is-favorite { color: #b94b45; background: #35233a; }
   &.is-favorite svg { fill: currentColor; }
   &:focus-visible { outline: 2px solid $color-accent; outline-offset: 2px; }
 }
@@ -598,7 +598,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
   padding: 36px 20px;
   border: 1px dashed $color-border;
   border-radius: 18px;
-  background: rgba(255, 253, 248, .55);
+  background: rgba(22, 36, 62, .42);
   text-align: center;
 
   h3 { margin: 12px 0 4px; font-size: 17px; }
