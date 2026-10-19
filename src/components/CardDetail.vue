@@ -237,7 +237,7 @@ async function copyImage() {
 
   &--primary {
     background: $color-accent;
-    color: #fff;
+    color: #0b1225;
 
     &:hover {
       background: color-mix(in srgb, $color-accent 88%, black);
