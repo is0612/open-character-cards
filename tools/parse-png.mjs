@@ -1,105 +1,132 @@
 /**
- * 从 SillyTavern 格式的角色卡 PNG 中解析内嵌数据
+ * 从 SillyTavern 格式的角色卡 PNG 中解析内嵌数据。
  *
- * 原理：SillyTavern 导出角色卡时，会把完整角色卡数据（JSON）base64 编码后
- * 写入 PNG 的 tEXt 元数据块（关键字通常是 "chara" 或 "ccv3"）。
- * 本模块读取 PNG 的 tEXt 块，解码出角色卡 JSON。
+ * 角色卡 JSON 通常以 base64 形式保存在 PNG 的 tEXt 元数据块中，
+ * 关键字常见为 chara 或 ccv3。
  */
 import { readFileSync } from 'node:fs'
 
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
+
 /**
- * 解析 PNG 文件，提取所有 tEXt 块的 {关键字: 文本值}
- * 纯手写 PNG 块遍历，零依赖。
+ * 读取 PNG 的 tEXt 元数据块。
+ * 对每个块的边界进行检查，避免损坏或恶意构造的文件导致越界解析。
  */
 export function readPngTextChunks(buffer) {
-  // PNG 签名：8 字节
-  const SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
-  if (buffer.length < 8 || !buffer.subarray(0, 8).equals(SIGNATURE)) {
+  if (!Buffer.isBuffer(buffer)) {
+    throw new TypeError('PNG 数据必须是 Buffer')
+  }
+
+  if (buffer.length < PNG_SIGNATURE.length || !buffer.subarray(0, 8).equals(PNG_SIGNATURE)) {
     throw new Error('不是有效的 PNG 文件')
   }
 
-  const chunks = {}
-  let offset = 8 // 跳过签名
+  const chunks = Object.create(null)
+  let offset = PNG_SIGNATURE.length
+  let hasIend = false
 
-  while (offset + 8 <= buffer.length) {
-    // 块长度（4 字节大端）
+  while (offset < buffer.length) {
+    // 每个块至少包含长度、类型和 CRC，共 12 字节。
+    if (buffer.length - offset < 12) {
+      throw new Error('PNG 文件损坏：数据块头部或 CRC 不完整')
+    }
+
     const length = buffer.readUInt32BE(offset)
     offset += 4
-    // 块类型（4 字节 ASCII）
+
     const type = buffer.toString('ascii', offset, offset + 4)
     offset += 4
-    // 块数据
+
+    // 预留 4 字节 CRC，并使用减法检查避免 offset + length 溢出。
+    if (length > buffer.length - offset - 4) {
+      throw new Error(`PNG 文件损坏：数据块 ${type} 超出文件范围`)
+    }
+
     const data = buffer.subarray(offset, offset + length)
-    offset += length
-    // CRC（4 字节，跳过）
-    offset += 4
+    offset += length + 4 // 跳过数据和 CRC
 
     if (type === 'tEXt') {
-      // tEXt 块结构：关键字\0文本
       const nullIdx = data.indexOf(0)
-      if (nullIdx !== -1) {
+      if (nullIdx > 0) {
         const keyword = data.toString('latin1', 0, nullIdx)
         const text = data.toString('utf8', nullIdx + 1)
-        chunks[keyword] = text
+        // 保留首个同名字段，避免后续重复字段静默覆盖原始数据。
+        if (!(keyword in chunks)) chunks[keyword] = text
       }
     }
 
-    if (type === 'IEND') break
+    if (type === 'IEND') {
+      hasIend = true
+      break
+    }
+  }
+
+  if (!hasIend) {
+    throw new Error('PNG 文件损坏：缺少 IEND 结束块')
   }
 
   return chunks
 }
 
+/** 解析 base64 或直接存储的 JSON 文本。 */
+function parseEmbeddedJson(value) {
+  if (typeof value !== 'string' || value.length === 0) return null
+
+  // 先尝试按 SillyTavern 常用的 base64 编码解析。
+  try {
+    const decoded = Buffer.from(value, 'base64').toString('utf8')
+    if (decoded.trim()) return JSON.parse(decoded)
+  } catch {
+    // 部分工具会直接将 JSON 文本写入元数据，继续尝试原文。
+  }
+
+  try {
+    return JSON.parse(value)
+  } catch {
+    return null
+  }
+}
+
 /**
- * 从 tEXt 块中提取角色卡数据。
- * SillyTavern 的角色卡 JSON 通常放在关键字 "chara" 下（base64 编码）。
+ * 从 PNG 中提取角色卡数据。
+ * 无法解析的嵌入内容返回 null，由调用方决定如何提示或跳过。
  */
 export function extractCardData(pngPath) {
-  const buffer = readFileSync(pngPath)
-  const chunks = readPngTextChunks(buffer)
+  const chunks = readPngTextChunks(readFileSync(pngPath))
 
-  // 优先找 "chara"（新版 SillyTavern 的 base64 编码卡数据）
-  if (chunks['chara']) {
-    try {
-      const decoded = Buffer.from(chunks['chara'], 'base64').toString('utf8')
-      const card = JSON.parse(decoded)
-      return card
-    } catch (e) {
-      // base64 解码失败，可能不是 base64，尝试直接当 JSON 读
-      try {
-        return JSON.parse(chunks['chara'])
-      } catch {
-        return { raw: chunks['chara'] }
-      }
+  for (const key of ['chara', 'ccv3']) {
+    if (chunks[key]) {
+      const parsed = parseEmbeddedJson(chunks[key])
+      if (parsed) return parsed
     }
   }
 
-  // 兼容其他关键字
-  if (chunks['ccv3']) {
-    try {
-      return JSON.parse(chunks['ccv3'])
-    } catch {
-      return { raw: chunks['ccv3'] }
-    }
-  }
-
-  // 没有任何内嵌数据
   return null
 }
 
-/** 从解析出的角色卡数据中取角色名（兼容多种字段名） */
+/** 从解析出的角色卡数据中提取角色名，兼容常见格式。 */
 export function resolveName(card) {
-  if (!card) return undefined
-  return card.name || card.character?.name || card.data?.name || card.raw
+  if (!card || typeof card !== 'object') return undefined
+
+  const candidates = [
+    card.name,
+    card.character?.name,
+    card.data?.name,
+  ]
+
+  return candidates.find((value) => typeof value === 'string' && value.trim())?.trim()
 }
 
-/** 从解析出的角色卡数据中取人设描述 */
+/** 从解析出的角色卡数据中提取人设描述。 */
 export function resolveDescription(card) {
-  if (!card) return undefined
-  return (
-    card.description ||
-    card.character?.description ||
-    card.data?.description ||
-    card.personality
-  )
+  if (!card || typeof card !== 'object') return undefined
+
+  const candidates = [
+    card.description,
+    card.character?.description,
+    card.data?.description,
+    card.personality,
+  ]
+
+  return candidates.find((value) => typeof value === 'string' && value.trim())
 }
