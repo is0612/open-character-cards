@@ -240,7 +240,21 @@ onMounted(loadCards)
 .hero-proof small{margin-top:4px;color:#7889af;font-size:10px}
 .hero-proof>i{height:27px;width:1px;background:rgba(167,190,238,.2)}
 .hero-art{position:relative;align-self:stretch;min-height:540px;display:flex;align-items:flex-end;justify-content:center;overflow:visible}
-.hero-character{position:relative;z-index:2;display:block;height:min(585px,calc(100% + 20px));max-height:585px;max-width:100%;width:auto;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 20px 34px rgba(0,0,0,.28));margin-bottom:-1px}
+.hero-character{position:relative;z-index:2;display:block;height:min(585px,calc(100% + 20px));max-height:585px;max-width:100%;width:auto;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 20px 34px rgba(0,0,0,.28));margin-bottom:-1px;transform-origin:50% 88%;animation:companion-float 7s ease-in-out infinite;will-change:transform}
+.art-moon{animation:moon-breathe 8s ease-in-out infinite;transform-origin:center}
+.art-orbit{animation:orbit-glimmer 10s ease-in-out infinite}
+.orbit-b{animation-delay:-5s}
+.art-stars b{animation:star-twinkle 3.8s ease-in-out infinite}
+.art-stars b:nth-child(2){animation-delay:-1.1s}
+.art-stars b:nth-child(3){animation-delay:-2.4s}
+.art-stars b:nth-child(4){animation-delay:-.7s}
+.art-stars b:nth-child(5){animation-delay:-1.8s}
+.art-caption{animation:caption-drift 6s ease-in-out infinite}
+@keyframes companion-float{0%,100%{transform:translate3d(0,0,0) rotate(-.25deg)}50%{transform:translate3d(0,-8px,0) rotate(.25deg)}}
+@keyframes moon-breathe{0%,100%{opacity:.76;scale:.98}50%{opacity:1;scale:1.035}}
+@keyframes orbit-glimmer{0%,100%{opacity:.42}50%{opacity:.9}}
+@keyframes star-twinkle{0%,100%{opacity:.5;filter:drop-shadow(0 0 0 rgba(169,196,255,0))}50%{opacity:1;filter:drop-shadow(0 0 7px rgba(169,196,255,.55))}}
+@keyframes caption-drift{0%,100%{translate:0 0}50%{translate:0 -4px}}
 .art-moon{position:absolute;z-index:0;width:250px;height:250px;top:44px;left:calc(50% - 125px);border-radius:50%;background:radial-gradient(circle at 42% 40%,rgba(193,213,255,.2),rgba(86,120,188,.1) 55%,rgba(39,58,99,.02) 74%);border:1px solid rgba(174,200,255,.17);box-shadow:0 0 90px rgba(77,112,192,.12),inset 0 0 45px rgba(184,205,255,.05)}
 .art-moon span{position:absolute;top:30px;right:36px;width:57px;height:57px;border:2px solid rgba(233,207,143,.92);border-radius:50%;box-shadow:0 0 22px rgba(233,207,143,.09)}
 .art-moon span:after{content:"";position:absolute;top:-7px;left:10px;width:53px;height:53px;border-radius:50%;background:#111d36}
