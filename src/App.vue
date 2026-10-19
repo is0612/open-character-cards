@@ -113,7 +113,7 @@ onMounted(loadCards)
             <div class="art-orbit orbit-b" aria-hidden="true"></div>
             <div class="art-moon" aria-hidden="true"><span></span></div>
             <div class="art-stars" aria-hidden="true"><b>✦</b><b>✧</b><b>·</b><b>✧</b><b>·</b></div>
-            <img class="hero-character" :src="base + 'images/moon-catgirl.webp'" alt="蓝白猫娘——Open Character Cards 的星夜引路人" fetchpriority="high" />
+            <img class="hero-character" :src="base + 'images/moon-catgirl.avif'" alt="蓝白猫娘——Open Character Cards 的星夜引路人" fetchpriority="high" />
             <div class="art-caption"><span class="caption-pulse"></span><span><strong>MOONLIGHT COMPANION</strong><small>愿每个故事，都能遇见灵魂</small></span></div>
           </div>
         </div>
