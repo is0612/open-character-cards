@@ -9,7 +9,7 @@
  *
  * 运行：npm run build:manifest
  */
-import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
+import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync, rmSync } from 'node:fs'
 import { join, dirname, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { extractCardData, resolveName } from './parse-png.mjs'
@@ -19,6 +19,8 @@ const ROOT = join(__dirname, '..')
 const CARDS_DIR = join(ROOT, 'cards')
 const OUT_DIR = join(ROOT, 'public', 'data')
 const OUT_FILE = join(OUT_DIR, 'manifest.json')
+// 卡片 PNG 需要被站点直接访问，复制一份到 public/cards（构建时进 dist）
+const PUBLIC_CARDS_DIR = join(ROOT, 'public', 'cards')
 
 function main() {
   if (!existsSync(CARDS_DIR)) {
@@ -84,6 +86,18 @@ function main() {
 
   mkdirSync(OUT_DIR, { recursive: true })
   writeFileSync(OUT_FILE, JSON.stringify(manifest, null, 2), 'utf-8')
+
+  // 同步 PNG 到 public/cards/，让 ${BASE_URL}cards/xxx.png 能被站点直接访问
+  mkdirSync(PUBLIC_CARDS_DIR, { recursive: true })
+  for (const pngFile of pngFiles) {
+    copyFileSync(join(CARDS_DIR, pngFile), join(PUBLIC_CARDS_DIR, pngFile))
+  }
+  // 清掉原文件已删除的残留副本
+  const wanted = new Set(pngFiles)
+  for (const f of readdirSync(PUBLIC_CARDS_DIR)) {
+    if (!wanted.has(f)) rmSync(join(PUBLIC_CARDS_DIR, f), { force: true })
+  }
+
   console.log(`已生成 manifest：${cards.length} 张角色卡 → ${OUT_FILE}`)
 }
 

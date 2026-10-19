@@ -48,11 +48,16 @@ const faqs = [
 async function loadCards() {
   try {
     const res = await fetch(`${import.meta.env.BASE_URL}data/manifest.json`)
+    if (res.status === 404) {
+      error.value =
+        '角色卡清单还没生成：本地请在仓库根目录运行 yarn build:manifest（yarn dev 也会自动生成），生成后刷新页面。'
+      return
+    }
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json()
     cards.value = data.cards ?? []
   } catch (e) {
-    error.value = '加载角色卡失败，请确认 data/manifest.json 已生成。'
+    error.value = '加载角色卡失败，请检查 data/manifest.json 是否可访问。'
     console.error(e)
   } finally {
     loading.value = false
@@ -102,7 +107,7 @@ onMounted(loadCards)
     <header id="top" class="hero">
       <div class="hero-inner">
         <span class="hero-eyebrow">开源 · 共享 · 共建</span>
-        <h1 class="hero-title">开源角色卡<br />共享平台</h1>
+        <h1 class="hero-title">角色卡<br />分享平台</h1>
         <p class="hero-sub">
           每张角色卡就是一张图片。下载它、导入酒馆，就能还原一个完整角色。<br />
           而你，也可以把喜欢的角色，分享给更多人。
@@ -244,6 +249,7 @@ onMounted(loadCards)
         </div>
         <p v-if="loading" class="status">加载中…</p>
         <p v-else-if="error" class="status status--error">{{ error }}</p>
+        <p v-else-if="cards.length === 0" class="status">还没有角色卡，把 PNG 放进 cards/ 目录就能出现在这里。</p>
         <CardGrid v-else :cards="cards" @select="openCard" />
       </div>
     </section>
