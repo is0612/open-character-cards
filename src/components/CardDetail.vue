@@ -100,7 +100,7 @@ async function copyImage() {
 .detail-mask {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(3, 8, 20, 0.78); backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -184,7 +184,7 @@ async function copyImage() {
   padding: 3px 10px;
   border-radius: 999px;
   background: $color-primary-soft;
-  color: $color-primary;
+  color: $color-text;
 }
 
 .detail-summary {
