@@ -34,7 +34,7 @@ function main() {
   const cards = []
 
   for (const pngFile of pngFiles) {
-    const id = basename(pngFile, '.png')
+    const id = basename(pngFile).replace(/\.png$/i, '')
     const pngPath = join(CARDS_DIR, pngFile)
     const metaPath = join(CARDS_DIR, `${id}.meta.json`)
 
