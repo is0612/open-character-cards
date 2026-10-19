@@ -49,7 +49,7 @@ export function readPngTextChunks(buffer) {
       const nullIdx = data.indexOf(0)
       if (nullIdx > 0) {
         const keyword = data.toString('latin1', 0, nullIdx)
-        const text = data.toString('latin1', nullIdx + 1)
+        const text = data.toString('utf8', nullIdx + 1)
         // 保留首个同名字段，避免后续重复字段静默覆盖原始数据。
         if (!(keyword in chunks)) chunks[keyword] = text
       }
