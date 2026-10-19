@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import type { ManifestCard } from '../types/card'
 
 const props = defineProps<{
@@ -12,6 +12,7 @@ const emit = defineEmits<{
 
 const base = import.meta.env.BASE_URL
 const query = ref('')
+const searchInput = ref<HTMLInputElement | null>(null)
 const activeTag = ref('全部')
 const sortBy = ref<'default' | 'name'>('default')
 const favoritesOnly = ref(false)
@@ -77,7 +78,19 @@ function clearFilters() {
   sortBy.value = 'default'
 }
 
-onMounted(loadFavorites)
+function handleSearchShortcut(event: KeyboardEvent) {
+  if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return
+  const target = event.target as HTMLElement | null
+  if (target?.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target?.tagName ?? '')) return
+  event.preventDefault()
+  searchInput.value?.focus()
+}
+
+onMounted(() => {
+  loadFavorites()
+  window.addEventListener('keydown', handleSearchShortcut)
+})
+onUnmounted(() => window.removeEventListener('keydown', handleSearchShortcut))
 </script>
 
 <template>
@@ -85,7 +98,7 @@ onMounted(loadFavorites)
     <div class="gallery-toolbar">
       <label class="search-box">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" /><path d="m16 16 4.5 4.5" /></svg>
-        <input v-model="query" type="search" placeholder="搜索角色名、作者、标签…" aria-label="搜索角色卡" />
+        <input ref="searchInput" v-model="query" type="search" placeholder="搜索角色名、作者、标签…" aria-label="搜索角色卡" />
         <kbd>/</kbd>
       </label>
       <label class="sort-control">
