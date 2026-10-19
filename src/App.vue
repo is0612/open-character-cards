@@ -259,7 +259,7 @@ onMounted(loadCards)
 .art-caption strong,.art-caption small{display:block}
 .art-caption strong{color:#dce6fc;font-size:9px;font-weight:700;letter-spacing:.13em}
 .art-caption small{color:#8b9fc6;margin-top:4px;font-size:10px}
-.hero-bottomline{position:absolute;bottom:0;left:0;right:0;height:35px;padding:0 max(28px,calc((100% - 1240px)/2);display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(153,181,240,.1);color:#66799f;font-size:8px;letter-spacing:.17em}
+.hero-bottomline{position:absolute;bottom:0;left:0;right:0;height:35px;padding:0 max(28px,calc((100% - 1240px)/2));display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(153,181,240,.1);color:#66799f;font-size:8px;letter-spacing:.17em}
 .hero-bottomline b{padding-left:6px;color:#d9c486;font-size:11px}
 .section{padding:86px 0}
 .section-inner{width:min(1240px,calc(100% - 56px));margin:0 auto}
