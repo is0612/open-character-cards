@@ -26,8 +26,8 @@ export function readPngTextChunks(buffer) {
   let hasIend = false
 
   while (offset < buffer.length) {
-    // 每个块至少包含长度、类型和 CRC，共 12 字节。
-    if (buffer.length - offset < 12) {
+    // 长度和类型头部共 8 字节；先确保可以安全读取它们。
+    if (buffer.length - offset < 8) {
       throw new Error('PNG 文件损坏：数据块头部或 CRC 不完整')
     }
 
@@ -38,6 +38,7 @@ export function readPngTextChunks(buffer) {
     offset += 4
 
     // 预留 4 字节 CRC，并使用减法检查避免 offset + length 溢出。
+    // 先检查声明长度，可让损坏的超长块得到更明确的越界错误。
     if (length > buffer.length - offset - 4) {
       throw new Error(`PNG 文件损坏：数据块 ${type} 超出文件范围`)
     }
