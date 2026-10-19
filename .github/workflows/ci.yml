@@ -24,6 +24,8 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - name: Run parser regression tests
+        run: npm test
       - name: Build character card manifest
         run: npm run build:manifest
       - name: Type-check and build site
