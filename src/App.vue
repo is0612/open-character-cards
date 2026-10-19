@@ -64,10 +64,11 @@ onMounted(loadCards)
         <a class="brand" href="#top" aria-label="Open Character Cards 首页">
           <span class="brand-mark" aria-hidden="true">
             <svg viewBox="0 0 44 44" fill="none">
-              <path d="M7 18 10.5 5 20 13h4L34 5l3 14v8c0 8-6 12-15 12S7 35 7 27v-9Z" fill="currentColor" opacity=".18"/>
-              <path d="M7 18 10.5 5 20 13h4L34 5l3 14v8c0 8-6 12-15 12S7 35 7 27v-9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-              <path d="M25.7 10.2a7.6 7.6 0 1 0 8.1 11.1 8 8 0 0 1-8.1-11.1Z" fill="#E7CE91"/>
-              <path d="m16 24 1.2 2.5 2.8.4-2 1.9.5 2.8-2.5-1.3-2.5 1.3.5-2.8-2-1.9 2.8-.4L16 24Z" fill="currentColor"/>
+              <path d="M10.8 16.1 8.2 5.3 19.5 12.2M24.5 12.2 35.8 5.3 33.2 16.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="22" cy="25" r="13.4" fill="currentColor" fill-opacity=".1"/>
+              <circle cx="22" cy="25" r="13.4" stroke="currentColor" stroke-width="2.2"/>
+              <path d="M28.7 8.9a6.4 6.4 0 1 0 6.1 9.6 6.6 6.6 0 0 1-6.1-9.6Z" fill="#E7CE91"/>
+              <path d="m22 18.1 2.1 4.7 4.7 2.2-4.7 2.1-2.1 4.7-2.2-4.7-4.7-2.1 4.7-2.2 2.2-4.7Z" fill="#E7CE91"/>
             </svg>
           </span>
           <span class="brand-copy">
