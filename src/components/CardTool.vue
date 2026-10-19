@@ -611,8 +611,8 @@ function onDragLeave(e: DragEvent): void {
   flex-direction: column;
   gap: 4px;
   font-size: $fs-muted;
-  color: #8b2f22;
-  background: #fae9e6;
+  color: #ffaaa1;
+  background: #3a2635;
 
   strong {
     font-weight: 600;
@@ -686,15 +686,15 @@ function onDragLeave(e: DragEvent): void {
   border: 1px solid $color-border;
 
   &--ok {
-    background: #e8f2e9;
+    background: #1b382f;
     color: $color-success;
-    border-color: #cfe2d2;
+    border-color: #2c5545;
   }
 
   &--warn {
     background: $color-accent-soft;
-    color: #a8651c;
-    border-color: #efdcc0;
+    color: #e0bc79;
+    border-color: #55462c;
   }
 }
 
@@ -786,17 +786,17 @@ function onDragLeave(e: DragEvent): void {
 
   &--warn {
     background: $color-accent-soft;
-    color: #7a4a12;
+    color: #f0d390;
   }
 
   &--bad {
-    background: #fae9e6;
-    color: #8b2f22;
+    background: #3a2635;
+    color: #ffaaa1;
   }
 
   &--ok {
-    background: #e8f2e9;
-    color: #2f5f3a;
+    background: #1b382f;
+    color: #9ce2ba;
   }
 }
 
@@ -832,7 +832,7 @@ function onDragLeave(e: DragEvent): void {
     word-break: break-all;
     max-height: 420px;
     overflow: auto;
-    color: #3a2d22;
+    color: #dce6f7;
   }
 }
 
