@@ -55,7 +55,7 @@ function probeTavernBanner() {
   image.onerror = () => {
     bannerLoaded.value = false
   }
-  image.src = base + 'images/moonlit-tavern-banner.webp'
+  image.src = base + 'images/moonlit-tavern-banner.svg'
 }
 
 function openCard(card: ManifestCard) {
@@ -110,7 +110,7 @@ onMounted(() => {
         id="top"
         class="hero"
         :class="{ 'has-banner': bannerLoaded }"
-        :style="{ '--tavern-banner': 'url(' + base + 'images/moonlit-tavern-banner.webp)' }"
+        :style="{ '--tavern-banner': 'url(' + base + 'images/moonlit-tavern-banner.svg)' }"
       >
         <div class="tavern-fallback" aria-hidden="true">
           <div class="tavern-window">
@@ -334,9 +334,9 @@ onMounted(() => {
 .art-caption strong,.art-caption small{display:block}
 .art-caption strong{color:#f3dca8;font-size:9px;font-weight:750;letter-spacing:.13em}
 .art-caption small{color:#a9b7d0;margin-top:4px;font-size:10px}
-.hero.has-banner .hero-inner{grid-template-columns:1fr}
+.hero.has-banner .hero-inner{grid-template-columns:1.02fr .98fr}
 .hero.has-banner .hero-copy{max-width:570px}
-.hero.has-banner .hero-art{display:none}
+.hero.has-banner .tavern-fallback{display:none}
 .hero-bottomline{position:absolute;z-index:3;bottom:0;left:0;right:0;height:34px;padding:0 max(28px,calc((100% - 1240px)/2));display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(222,193,133,.18);color:#a5a8b6;font-size:8px;letter-spacing:.15em;background:linear-gradient(90deg,rgba(5,10,20,.48),rgba(5,10,20,.06))}
 .hero-bottomline b{padding-left:6px;color:#e7c67f;font-size:11px}
 .about-section{position:relative;padding:34px 0 10px;background:linear-gradient(180deg,#090f1e,#0d1424)}
