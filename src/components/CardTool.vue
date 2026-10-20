@@ -682,7 +682,7 @@ function onDragLeave(e: DragEvent): void {
   padding: 2px 9px;
   border-radius: 999px;
   background: $color-primary-soft;
-  color: $color-primary;
+  color: #a7b9d6;
   border: 1px solid $color-border;
 
   &--ok {

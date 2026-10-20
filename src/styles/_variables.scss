@@ -3,24 +3,24 @@
 // 主题：星夜档案馆 / 午夜蓝、月光蓝与暖金
 // ============================================
 
-// 色彩
-$color-bg: #0b1225;
-$color-surface: #111c34;
-$color-border: #2a3858;
+// 色彩（与设计稿一致）
+$color-bg: #050a14;
+$color-surface: #0b1a33;
+$color-border: #1a2a4a;
 
-$color-text: #edf3ff;
-$color-text-muted: #98a9ca;
+$color-text: #e6eaf3;
+$color-text-muted: #8a9bb8;
 
-$color-primary: #1b2d4f;
-$color-primary-soft: #24395f;
+$color-primary: #1a2a4a;
+$color-primary-soft: #12233f;
 
-$color-accent: #a9c4ff;
-$color-accent-soft: #202f50;
+$color-accent: #ffdb6b;
+$color-accent-soft: rgba(255, 219, 107, 0.1);
 
 $color-success: #8fd8b0;
 
 // 字体
-$font-sans: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, -apple-system, sans-serif;
+$font-sans: 'Inter', 'Poppins', 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, -apple-system, sans-serif;
 
 // 字阶
 $fs-hero: 44px;

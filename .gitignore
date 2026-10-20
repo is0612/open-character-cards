@@ -25,5 +25,11 @@ public/cards/
 # TypeScript 构建缓存
 *.tsbuildinfo
 
+# 设计稿素材与产物：AI 生成的占位立绘、抠图结果、截图成品，均不入库
+# （design.html / shots*.mjs / keyout.py 等脚本本体是入库的）
+tools/mock/assets/
+tools/mock/out/
+tools/mock/backup/
+
 # 本地工作记录（不属于仓库内容）
 .workbuddy/
