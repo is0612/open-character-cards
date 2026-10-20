@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Open Character Cards — 页面设计稿</title>
+<style>
+  :root{
+    --bg:#050a14;
+    --bg-2:#081426;
+    --panel:#0b1a33;
+    --panel-2:#0e1f38;
+    --line:#1a2a4a;
+    --line-soft:rgba(120,160,225,.14);
+    --ink:#e6eaf3;
+    --ink-dim:#b7c5dc;
+    --ink-mute:#8496b4;
+    --gold:#ffdb6b;
+    --gold-2:#f1d69a;
+    --gold-dim:#c9ad74;
+    --moon:#a8c6ff;
+    --serif:Georgia,'Times New Roman','Songti SC','SimSun',serif;
+    --sans:'Segoe UI','Microsoft YaHei','PingFang SC',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scrollbar-width:none}
+  ::-webkit-scrollbar{width:0;height:0}
+  body{margin:0;padding:0;display:block;background:#000;
+    font-family:var(--sans);color:var(--ink);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+  .frame{position:relative;overflow:hidden;background:var(--bg);isolation:isolate}
+  .frame + .frame{margin-top:0}
+
+  /* ---------- 星空层 ---------- */
+  .stars{position:absolute;inset:0;pointer-events:none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8% 14%,rgba(255,255,255,.85),transparent 100%),
+      radial-gradient(1.2px 1.2px at 17% 63%,rgba(206,224,255,.7),transparent 100%),
+      radial-gradient(1px 1px at 24% 31%,rgba(255,255,255,.6),transparent 100%),
+      radial-gradient(1.6px 1.6px at 33% 82%,rgba(255,246,214,.75),transparent 100%),
+      radial-gradient(1px 1px at 41% 19%,rgba(255,255,255,.5),transparent 100%),
+      radial-gradient(1.3px 1.3px at 52% 56%,rgba(214,230,255,.6),transparent 100%),
+      radial-gradient(1.1px 1.1px at 63% 12%,rgba(255,255,255,.55),transparent 100%),
+      radial-gradient(1.4px 1.4px at 71% 74%,rgba(255,240,200,.55),transparent 100%),
+      radial-gradient(1px 1px at 79% 39%,rgba(255,255,255,.45),transparent 100%),
+      radial-gradient(1.5px 1.5px at 88% 21%,rgba(220,235,255,.7),transparent 100%),
+      radial-gradient(1.1px 1.1px at 94% 66%,rgba(255,255,255,.5),transparent 100%),
+      radial-gradient(1.2px 1.2px at 58% 90%,rgba(200,220,255,.45),transparent 100%);
+  }
+
+  /* ---------- 顶栏 ---------- */
+  .hd{position:relative;z-index:20;height:72px;display:flex;align-items:center;
+    padding:0 100px;border-bottom:1px solid rgba(26,42,74,.9);
+    background:rgba(6,16,33,.94);backdrop-filter:blur(18px)}
+  .brand{display:flex;align-items:center;gap:11px;flex:0 0 auto;text-decoration:none}
+  .brand svg{width:40px;height:40px;display:block}
+  .brand b{display:block;font-size:12.5px;font-weight:600;line-height:1.25;letter-spacing:.02em;color:#f1f4fa}
+  .nav{display:flex;align-items:center;gap:32px;margin-left:44px;align-self:stretch}
+  .nav a{position:relative;display:flex;align-items:center;font-size:14px;
+    color:var(--ink-mute);text-decoration:none}
+  .nav a.on{color:var(--gold)}
+  .nav a.on::after{content:'';position:absolute;left:50%;bottom:20px;width:22px;height:2px;
+    border-radius:2px;background:var(--gold);transform:translateX(-50%)}
+  .search{margin-left:auto;display:flex;align-items:center;gap:9px;width:250px;height:40px;
+    padding:0 15px;border:1px solid #1d3558;border-radius:999px;background:rgba(15,32,58,.82)}
+  .search svg{width:16px;height:16px;flex:0 0 auto;fill:none;stroke:var(--ink-mute);stroke-width:1.8;stroke-linecap:round}
+  .search span{font-size:13px;color:#7f8fac}
+  .gh{margin-left:18px;width:34px;height:34px;display:grid;place-items:center;flex:0 0 auto}
+  .gh svg{width:23px;height:23px;fill:none;stroke:#e6eaf3;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ---------- 按钮 ---------- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    height:48px;padding:0 26px;border-radius:999px;font-size:14px;font-weight:600;
+    text-decoration:none;white-space:nowrap}
+  .btn-gold{background:var(--gold);border:1px solid var(--gold);color:#1c2432;
+    box-shadow:0 12px 30px rgba(255,200,90,.18)}
+  .btn-ghost{border:1px solid rgba(241,214,154,.55);background:rgba(7,18,36,.55);color:#f2e7d1}
+  .btn .ar{font-size:16px;line-height:1}
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative;height:420px;overflow:hidden;
+    border-bottom:1px solid rgba(31,49,82,.85);
+    background:
+      radial-gradient(ellipse at 74% 40%,rgba(255,205,112,.10),transparent 36%),
+      radial-gradient(ellipse at 58% 44%,rgba(54,86,150,.26),transparent 46%),
+      linear-gradient(108deg,#040c1a 0%,#071528 52%,#0c1e3a 100%)}
+  .hero-moon{position:absolute;right:118px;top:-64px;width:600px;height:600px;
+    background:radial-gradient(circle,rgba(196,218,255,.20) 0%,rgba(150,182,255,.09) 40%,transparent 68%)}
+  .hero-disc{position:absolute;right:196px;top:44px;width:392px;height:392px;border-radius:50%;
+    background:radial-gradient(circle at 38% 32%,rgba(255,246,220,.15),rgba(200,218,255,.07) 55%,transparent 72%);
+    border:1px solid rgba(214,230,255,.10)}
+  .hero-inner{position:relative;z-index:3;height:100%;display:flex;align-items:center;
+    width:1240px;margin:0 auto}
+  .hero-copy{max-width:640px;margin-top:-6px}
+  .eyebrow{display:flex;align-items:center;gap:9px;margin-bottom:20px;
+    font-size:10px;letter-spacing:.19em;font-weight:650;color:#93a6c4}
+  .eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--gold);flex:0 0 auto}
+  .hero h1{margin:0;font-family:var(--serif);font-size:56px;line-height:1.1;
+    font-weight:700;color:#f8f2e4;letter-spacing:.002em;text-shadow:0 8px 40px rgba(0,0,0,.45);white-space:nowrap}
+  .hero h2{margin:16px 0 0;font-size:23px;font-weight:600;letter-spacing:.03em;color:#f1d69a}
+  .hero p.desc{margin:13px 0 0;font-size:14.5px;line-height:1.7;color:#b9c7de;max-width:430px}
+  .hero-cta{display:flex;gap:14px;margin-top:30px}
+  .hero-art{position:absolute;right:96px;bottom:-132px;height:536px;z-index:2;
+    filter:drop-shadow(0 22px 60px rgba(0,0,0,.55))}
+  .hero-art img{height:100%;width:auto;display:block}
+  .hero-fade{position:absolute;left:0;right:0;bottom:0;height:150px;z-index:4;pointer-events:none;
+    background:linear-gradient(0deg,#081426 6%,rgba(8,20,38,.55) 46%,transparent 100%)}
+
+  /* ---------- 精选 ---------- */
+  .featured{position:relative;background:#081426;padding:26px 0 0}
+  .wrap{width:1240px;margin:0 auto}
+  .feat-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+  .feat-head h3{margin:0;display:flex;align-items:center;gap:9px;
+    font-size:20px;font-weight:600;letter-spacing:.01em;color:#f2ead9}
+  .feat-head h3 s{text-decoration:none;color:var(--gold);font-size:16px}
+  .feat-head p{margin:6px 0 0;font-size:12.5px;color:var(--ink-mute)}
+  .more{display:flex;align-items:center;gap:7px;font-size:13px;color:#d7c08a}
+  .more i{font-style:normal;transition:transform .2s}
+
+  /* ---------- 卡片 ---------- */
+  .grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:20px}
+  .tile{min-width:0}
+  .art{position:relative;aspect-ratio:3/4;border-radius:12px;overflow:hidden;
+    background:
+      radial-gradient(ellipse at 50% 12%,rgba(169,196,255,.16),transparent 60%),
+      linear-gradient(158deg,#152c50 0%,#0d1e3a 58%,#0a1730 100%);
+    border:1px solid rgba(120,160,225,.12)}
+  .art::after{content:'';position:absolute;left:0;right:0;bottom:0;height:40%;
+    background:linear-gradient(0deg,rgba(6,16,33,.82),transparent)}
+  .art img{position:absolute;left:50%;top:-1%;transform:translateX(-50%);
+    height:150%;width:auto;z-index:1}
+  .tile-meta{padding:10px 2px 0}
+  .tile-meta strong{display:block;font-size:16px;font-weight:600;color:var(--ink);
+    line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tile-meta .tags{display:flex;gap:7px;margin-top:5px}
+  .tile-meta .tags i{font-style:normal;font-size:11.5px;color:var(--ink-mute)}
+
+  /* 悬停态（设计稿里常显第一张） */
+  .tile.is-hover .art{border-color:rgba(255,219,107,.5);
+    box-shadow:0 16px 38px rgba(0,0,0,.42),0 0 0 1px rgba(255,219,107,.18) inset}
+  .tile.is-hover .art::after{height:64%;background:linear-gradient(0deg,rgba(6,16,33,.92),transparent)}
+  .peek{position:absolute;left:10px;right:10px;bottom:10px;z-index:2;
+    height:32px;display:flex;align-items:center;justify-content:center;gap:6px;
+    border-radius:8px;background:rgba(255,219,107,.94);color:#1c2432;
+    font-size:12px;font-weight:600;letter-spacing:.02em}
+
+  /* ---------- 画廊页 ---------- */
+  .gal{display:flex;height:828px;padding:16px 100px 0}
+  .rail{width:302px;flex:0 0 auto;padding-right:24px;margin-right:30px;
+    border-right:1px solid rgba(26,42,74,.75)}
+  .rail h4{margin:0 0 12px;font-size:10px;letter-spacing:.16em;font-weight:650;color:#7d8ead}
+  .cat{display:flex;flex-direction:column;gap:2px;margin-bottom:26px}
+  .cat a{display:flex;align-items:center;justify-content:space-between;
+    height:32px;padding:0 10px;border-radius:8px;font-size:13px;color:var(--ink-dim);text-decoration:none}
+  .cat a em{font-style:normal;font-size:11px;color:#6f80a0}
+  .cat a.on{background:rgba(255,219,107,.10);color:var(--gold);font-weight:600}
+  .cat a.on em{color:rgba(255,219,107,.72)}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:26px}
+  .chips i{font-style:normal;padding:5px 10px;border-radius:999px;
+    border:1px solid rgba(120,160,225,.18);background:rgba(18,35,63,.7);
+    font-size:11.5px;color:#a7b9d6}
+  .chips i.on{background:rgba(255,219,107,.13);border-color:rgba(255,219,107,.45);color:var(--gold)}
+  .sortbox{display:flex;align-items:center;justify-content:space-between;
+    height:36px;padding:0 12px;border:1px solid rgba(120,160,225,.18);
+    border-radius:9px;background:rgba(15,32,58,.7);font-size:12.5px;color:var(--ink-dim)}
+  .sortbox b{font-weight:400;font-size:10px;color:#7d8ead}
+  .rail-foot{margin-top:34px;padding-top:20px;border-top:1px solid rgba(26,42,74,.7)}
+  .rail-foot span{display:block;font-size:11px;line-height:1.8;color:#6f80a0}
+
+  .gal-main{flex:1;min-width:0}
+  .gal-head{display:flex;align-items:flex-end;justify-content:space-between;height:48px}
+  .gal-head h2{margin:0;font-size:26px;font-weight:600;letter-spacing:.01em;color:#f2ead9}
+  .gal-head p{margin:7px 0 0;font-size:12.5px;color:var(--ink-mute)}
+  .gal-head .count{font-size:12px;color:#7d8ead}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+  .gcard{border:1px solid rgba(120,160,225,.14);border-radius:14px;overflow:hidden;
+    background:linear-gradient(165deg,#0f2242,#0b1a33)}
+  .gcard .art{aspect-ratio:3/4;border:0;border-radius:0;
+    background:
+      radial-gradient(ellipse at 50% 10%,rgba(169,196,255,.18),transparent 58%),
+      linear-gradient(160deg,#162f55 0%,#0e2039 55%,#0a1730 100%)}
+  .gcard .tile-meta{padding:10px 13px 12px}
+  .gcard .tile-meta strong{font-size:16.5px}
+  .gcard .tile-meta .tags{margin-top:6px;gap:6px}
+  .gcard .tile-meta .tags i{padding:3px 8px;border-radius:999px;background:#1a2a4a;color:#a7b9d6;font-size:11px}
+  .gcard.is-hover{border-color:rgba(255,219,107,.42);box-shadow:0 18px 38px rgba(0,0,0,.34)}
+
+  /* ---------- 详情浮层 ---------- */
+  .veil{position:absolute;inset:0;z-index:1;
+    background:
+      radial-gradient(ellipse at 20% 22%,rgba(46,74,124,.55),transparent 52%),
+      radial-gradient(ellipse at 78% 68%,rgba(38,58,102,.5),transparent 55%),
+      linear-gradient(160deg,#060f1f,#040a15)}
+  .veil-blob{position:absolute;border-radius:16px;filter:blur(26px);opacity:.85;
+    background:linear-gradient(160deg,#1e3459,#0e1e39)}
+  .veil-shade{position:absolute;inset:0;z-index:2;background:rgba(3,8,17,.62);backdrop-filter:blur(9px)}
+  .modal{position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:960px;height:600px;display:flex;border-radius:18px;overflow:hidden;
+    border:1px solid rgba(255,219,107,.16);
+    background:linear-gradient(150deg,#0d2140,#081426 62%);
+    box-shadow:0 40px 100px rgba(0,0,0,.62)}
+  .modal-art{position:relative;width:440px;flex:0 0 auto;overflow:hidden;
+    background:
+      radial-gradient(ellipse at 50% 8%,rgba(169,196,255,.22),transparent 56%),
+      linear-gradient(165deg,#152c50,#081426)}
+  .modal-art::after{content:'';position:absolute;inset:0;
+    background:linear-gradient(90deg,transparent 66%,rgba(8,20,38,.95) 100%)}
+  .modal-art img{position:absolute;left:50%;bottom:-4%;transform:translateX(-50%);height:104%;width:auto}
+  .modal-close{position:absolute;right:16px;top:16px;z-index:4;width:34px;height:34px;
+    display:grid;place-items:center;border-radius:50%;
+    border:1px solid rgba(120,160,225,.24);background:rgba(6,16,33,.7);color:#c7d3e6;font-size:15px}
+  .modal-body{flex:1;padding:40px 44px 0;display:flex;flex-direction:column;min-width:0}
+  .kick{font-size:9.5px;letter-spacing:.18em;font-weight:650;color:#8496b4}
+  .modal-body h2{margin:11px 0 0;font-size:38px;font-weight:600;letter-spacing:.01em;color:#f6efdf;
+    font-family:var(--serif)}
+  .modal-tags{display:flex;gap:8px;margin-top:14px}
+  .modal-tags i{font-style:normal;padding:5px 11px;border-radius:999px;
+    background:rgba(255,219,107,.10);border:1px solid rgba(255,219,107,.28);
+    font-size:11.5px;color:var(--gold-2)}
+  .modal-body .sum{margin:20px 0 0;font-size:13.5px;line-height:1.95;color:#b7c5dc;max-width:420px}
+  .facts{margin-top:26px;padding-top:22px;border-top:1px solid rgba(26,42,74,.9);
+    display:grid;grid-template-columns:78px 1fr 78px 1fr;gap:12px 0;max-width:430px}
+  .facts dt{font-size:12px;color:#7d8ead}
+  .facts dd{margin:0;font-size:12.5px;color:#dbe4f3}
+  .modal-cta{margin-top:auto;padding-bottom:38px;display:flex;gap:12px;align-items:center}
+  .modal-cta .btn{height:44px;padding:0 22px;font-size:13px}
+  .btn-line{border:1px solid rgba(120,160,225,.28);background:rgba(15,32,58,.7);color:#dfe7f5}
+  .lic{margin-left:auto;font-size:11px;color:#6f80a0;text-align:right;line-height:1.6}
+
+  /* ---------- 关于页 ---------- */
+  .about{position:relative;height:828px;padding:64px 100px 72px;overflow:hidden;
+    display:flex;flex-direction:column;justify-content:space-between}
+  .about-top{display:flex;align-items:flex-start;justify-content:space-between}
+  .about-copy{max-width:600px;position:relative;z-index:1}
+  .about h2{margin:14px 0 0;font-size:44px;font-weight:600;
+    line-height:1.2;letter-spacing:.01em;color:#f7f1e2}
+  .about .lead{margin:20px 0 0;font-size:14.5px;line-height:2;color:#b7c5dc}
+  .about .lead b{color:#e9eef8;font-weight:600}
+  .about-art img{height:100%;width:auto}
+  .about-stats{display:flex;flex-direction:column;gap:0;width:300px;flex:0 0 auto;
+    margin-top:6px;border-left:1px solid rgba(26,42,74,.9);padding-left:38px}
+  .about-stats div{display:flex;align-items:baseline;gap:14px;padding:16px 0;
+    border-bottom:1px solid rgba(26,42,74,.7)}
+  .about-stats div:last-child{border-bottom:0}
+  .about-stats b{font-family:var(--serif);font-size:30px;font-weight:700;color:var(--gold);line-height:1}
+  .about-stats span{font-size:12.5px;color:#93a4c1}
+  .caps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;width:1240px;position:relative;z-index:1}
+  .cap{position:relative;min-height:190px;padding:28px 26px 26px;border-radius:14px;
+    border:1px solid rgba(120,160,225,.16);
+    background:linear-gradient(152deg,#0d1e3a,#0a1730)}
+  .cap::before{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,219,107,.32),transparent)}
+  .cap .ic{width:42px;height:42px;display:grid;place-items:center;border-radius:11px;
+    border:1px solid rgba(255,219,107,.28);background:rgba(255,219,107,.06)}
+  .cap .ic svg{width:21px;height:21px;fill:none;stroke:var(--gold);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .cap h3{margin:18px 0 8px;font-size:15.5px;font-weight:600;color:#eef2f9}
+  .cap p{margin:0;font-size:12.5px;line-height:1.85;color:#93a4c1;max-width:290px}
+  .cap span.num{position:absolute;right:22px;top:22px;font-size:11px;letter-spacing:.12em;color:rgba(255,219,107,.42)}
+  .cta-bar{width:1240px;position:relative;z-index:1;display:flex;align-items:center;gap:24px;
+    padding:26px 30px;border-radius:14px;border:1px solid rgba(120,160,225,.16);
+    background:radial-gradient(ellipse at 90% 0%,rgba(255,219,107,.07),transparent 46%),#0b1a33}
+  .cta-bar h4{margin:0;font-size:16px;font-weight:600;color:#f2ead9}
+  .cta-bar p{margin:6px 0 0;font-size:12.5px;color:#8496b4}
+  .cta-bar .btn{margin-left:auto;height:44px;font-size:13px;padding:0 22px}
+
+  /* ---------- 使用指南 / 工具箱 ---------- */
+  .guide{position:relative;height:828px;display:flex;flex-direction:column;
+    justify-content:center;padding:0 100px;
+    background:radial-gradient(ellipse at 50% 100%,rgba(255,205,112,.04),transparent 50%),#050a14}
+  .sec-head h2{margin:12px 0 0;font-size:28px;font-weight:600;letter-spacing:.02em;color:#f2ead9}
+  .sec-head p{margin:9px 0 0;font-size:13px;color:var(--ink-mute)}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+  .step{position:relative;min-height:204px;padding:26px;border-radius:14px;overflow:hidden;
+    border:1px solid rgba(120,160,225,.16);background:linear-gradient(152deg,#0c1c36,#0a1730)}
+  .step::before{content:'';position:absolute;left:24px;right:24px;top:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,219,107,.3),transparent)}
+  .step .no{position:absolute;right:20px;top:18px;font-size:11.5px;letter-spacing:.12em;color:rgba(255,219,107,.42)}
+  .step .ic{width:42px;height:42px;display:grid;place-items:center;border-radius:11px;
+    border:1px solid rgba(255,219,107,.3);background:rgba(255,219,107,.055)}
+  .step .ic svg{width:21px;height:21px;fill:none;stroke:var(--gold);stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
+  .step h3{margin:17px 0 7px;font-size:15.5px;font-weight:600;color:#eef2f9}
+  .step p{margin:0;font-size:12.5px;line-height:1.85;color:#93a4c1;max-width:290px}
+  .step .ln{position:absolute;left:24px;bottom:0;width:48px;height:2px;
+    background:linear-gradient(90deg,var(--gold),transparent)}
+  .tool{margin-top:30px;padding:28px 30px;border-radius:16px;
+    border:1px solid rgba(120,160,225,.16);
+    background:radial-gradient(ellipse at 92% 0%,rgba(255,219,107,.06),transparent 36%),#0b1a33}
+  .tool-head{display:flex;align-items:flex-end;justify-content:space-between;
+    padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid rgba(31,53,87,.62)}
+  .tool-head h3{margin:0;font-size:20px;font-weight:600;color:#f1e8d6}
+  .tool-head p{margin:7px 0 0;font-size:12px;color:#8496b4}
+  .tool-head .pill{flex:none;padding:6px 11px;border-radius:999px;
+    border:1px solid rgba(255,219,107,.2);color:#cfb57d;font-size:8px;letter-spacing:.14em}
+  .tool-body{display:grid;grid-template-columns:340px 1fr;gap:22px}
+  .drop{height:172px;border:1.5px dashed #2a436a;border-radius:12px;
+    background:rgba(5,12,26,.46);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:10px}
+  .drop svg{width:26px;height:26px;fill:none;stroke:var(--gold);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+  .drop b{font-size:13px;font-weight:600;color:#e6eaf3}
+  .drop span{font-size:11px;color:#8496b4}
+  .result{border:1px solid rgba(120,160,225,.18);border-radius:12px;background:#0e1f38;padding:16px 18px}
+  .result .row{display:flex;padding:9px 0;border-bottom:1px solid rgba(42,67,106,.5);font-size:12px}
+  .result .row:last-child{border:0}
+  .result .row b{width:76px;flex:0 0 auto;font-weight:400;color:#7d8ead}
+  .result .row span{color:#c3cddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  /* ---------- 移动端 ---------- */
+  .m-hd{height:60px;display:flex;align-items:center;gap:10px;padding:0 16px;
+    border-bottom:1px solid rgba(26,42,74,.9);background:rgba(6,16,33,.95);position:relative;z-index:10}
+  .m-hd .brand svg{width:32px;height:32px}
+  .m-hd .brand b{font-size:10.5px}
+  .m-hd .ic{width:34px;height:34px;display:grid;place-items:center;
+    border:1px solid rgba(120,160,225,.22);border-radius:9px;background:rgba(15,32,58,.8)}
+  .m-hd .ic svg{width:16px;height:16px;fill:none;stroke:#dbe4f5;stroke-width:1.8;stroke-linecap:round}
+  .m-hd .sp{margin-left:auto}
+  .m-hero{position:relative;height:366px;overflow:hidden;
+    background:
+      radial-gradient(ellipse at 62% 34%,rgba(255,205,112,.10),transparent 42%),
+      radial-gradient(ellipse at 50% 40%,rgba(54,86,150,.30),transparent 52%),
+      linear-gradient(168deg,#040c1a,#0a1b33)}
+  .m-hero .disc{position:absolute;left:50%;top:34px;transform:translateX(-50%);
+    width:250px;height:250px;border-radius:50%;border:1px solid rgba(214,230,255,.10);
+    background:radial-gradient(circle at 40% 34%,rgba(255,246,220,.15),rgba(200,218,255,.06) 56%,transparent 72%)}
+  .m-hero img{position:absolute;left:50%;transform:translateX(-50%);bottom:-58px;height:386px;width:auto}
+  .m-hero .fade{position:absolute;left:0;right:0;bottom:0;height:150px;
+    background:linear-gradient(0deg,#081426 10%,rgba(8,20,38,.7) 50%,transparent)}
+  .m-body{position:relative;margin-top:-80px;z-index:5;padding:0 18px}
+  .m-body h1{margin:0;font-family:var(--serif);font-size:21px;font-weight:700;color:#f8f2e4;letter-spacing:.01em}
+  .m-body h2{margin:10px 0 0;font-size:16px;font-weight:600;color:#f1d69a}
+  .m-body p{margin:9px 0 0;font-size:12px;line-height:1.75;color:#b9c7de}
+  .m-cta{display:flex;gap:9px;margin-top:16px}
+  .m-cta .btn{height:40px;padding:0 16px;font-size:11.5px;border-radius:999px}
+  .m-feat{margin-top:26px}
+  .m-feat .head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
+  .m-feat .head b{font-size:15px;font-weight:600;color:#f2ead9}
+  .m-feat .head span{font-size:11px;color:#8496b4}
+  .m-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px}
+  .m-grid .tile-meta strong{font-size:13.5px}
+  .m-grid .tile-meta .tags{margin-top:3px;gap:6px}
+  .m-grid .tile-meta .tags i{font-size:10.5px}
+
+  /* 标注条 */
+  .shotnote{position:absolute;left:0;bottom:0;z-index:99;padding:6px 12px;
+    background:rgba(0,0,0,.55);color:#ffdb6b;font-size:10px;letter-spacing:.14em}
+</style>
+</head>
+<body>
+
+<!-- ============ 01 首页 ============ -->
+<div class="frame" data-shot="01-home" style="width:1440px;height:900px">
+  <div class="stars"></div>
+  <header class="hd">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="25" r="16.4" fill="#0b1a33" stroke="#e6eaf3" stroke-width="1.8"/>
+        <path d="M11.6 18.2 8.9 7.1 19.9 13.5M28.1 13.5 39.1 7.1 36.4 18.2" stroke="#e6eaf3" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M30.6 8.1a7 7 0 1 0 6.7 10.7 7.2 7.2 0 0 1-6.7-10.7Z" fill="#ffdb6b"/>
+        <path d="m23.8 18.6 1.9 4.1 4.2 1.9-4.2 1.9-1.9 4.2-2-4.2-4.1-1.9 4.1-1.9 2-4.1Z" fill="#ffdb6b"/>
+        <path d="M17.5 27.4c1.5 3.2 4 4.9 6.5 4.9s5-1.7 6.5-4.9" stroke="#8a9bb8" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      <b>Open<br>Character Cards</b>
+    </a>
+    <nav class="nav"><a class="on" href="#">首页</a><a href="#">角色卡</a><a href="#">关于</a></nav>
+    <div class="search">
+      <svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg>
+      <span>搜索角色…</span>
+    </div>
+    <a class="gh" href="#"><svg viewBox="0 0 24 24"><path d="M9 19c-4.3 1.3-4.3-2.4-6-2.9M15 21v-3.4a3 3 0 0 0-.8-2.3c2.7-.3 5.5-1.3 5.5-6A4.7 4.7 0 0 0 18.4 6 4.3 4.3 0 0 0 18.3 3S17.2 2.7 15 4.2a12.7 12.7 0 0 0-6 0C6.8 2.7 5.7 3 5.7 3A4.3 4.3 0 0 0 5.6 6 4.7 4.7 0 0 0 4.3 9.3c0 4.7 2.8 5.7 5.5 6A3 3 0 0 0 9 17.6V21"/></svg></a>
+  </header>
+
+  <section class="hero">
+    <div class="hero-moon"></div>
+    <div class="hero-disc"></div>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div class="eyebrow"><i></i>OPEN SOURCE · MOONLIT ARCHIVE</div>
+        <h1>Open Character Cards</h1>
+        <h2>开源的角色卡片分享平台</h2>
+        <p class="desc">发现更多有趣的角色，享受二次元的无限可能。<br>每张卡都是完整的人设，下载即用。</p>
+        <div class="hero-cta">
+          <a class="btn btn-gold" href="#">浏览角色卡 <span class="ar">→</span></a>
+          <a class="btn btn-ghost" href="#">
+            <svg style="width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M9 19c-4.3 1.3-4.3-2.4-6-2.9M15 21v-3.4a3 3 0 0 0-.8-2.3c2.7-.3 5.5-1.3 5.5-6A4.7 4.7 0 0 0 18.4 6 4.3 4.3 0 0 0 18.3 3S17.2 2.7 15 4.2a12.7 12.7 0 0 0-6 0C6.8 2.7 5.7 3 5.7 3A4.3 4.3 0 0 0 5.6 6 4.7 4.7 0 0 0 4.3 9.3c0 4.7 2.8 5.7 5.5 6A3 3 0 0 0 9 17.6V21"/></svg>
+            在 GitHub 查看
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-art"><img src="assets/cut/linke.png" alt="林可"></div>
+    <div class="hero-fade"></div>
+  </section>
+
+  <section class="featured">
+    <div class="wrap">
+      <div class="feat-head">
+        <div>
+          <h3><s>✦</s>精选角色卡</h3>
+          <p>从众多创作者中精选的优质角色档案</p>
+        </div>
+        <div class="more">查看全部 <i>→</i></div>
+      </div>
+      <div class="grid6">
+        <article class="tile"><div class="art"><img src="assets/cut/linke.png" alt=""></div>
+          <div class="tile-meta"><strong>林可</strong><div class="tags"><i>猫耳</i><i>萝莉</i></div></div></article>
+        <article class="tile is-hover"><div class="art"><img src="assets/cut/elise.png" alt=""><div class="peek">查看角色卡 →</div></div>
+          <div class="tile-meta"><strong>艾莉丝</strong><div class="tags"><i>甜系</i><i>少女</i></div></div></article>
+        <article class="tile"><div class="art"><img src="assets/cut/xingxi.png" alt=""></div>
+          <div class="tile-meta"><strong>星汐</strong><div class="tags"><i>观星</i><i>沉静</i></div></div></article>
+        <article class="tile"><div class="art"><img src="assets/cut/yuejian.png" alt=""></div>
+          <div class="tile-meta"><strong>月见</strong><div class="tags"><i>和风</i><i>巫女</i></div></div></article>
+        <article class="tile"><div class="art"><img src="assets/cut/tina.png" alt=""></div>
+          <div class="tile-meta"><strong>缇娜</strong><div class="tags"><i>精灵</i><i>元气</i></div></div></article>
+        <article class="tile"><div class="art"><img src="assets/cut/bailing.png" alt=""></div>
+          <div class="tile-meta"><strong>白澪</strong><div class="tags"><i>冰系</i><i>冷淡</i></div></div></article>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ 02 角色卡画廊 ============ -->
+<div class="frame" data-shot="02-gallery" style="width:1440px;height:900px">
+  <header class="hd">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="25" r="16.4" fill="#0b1a33" stroke="#e6eaf3" stroke-width="1.8"/>
+        <path d="M11.6 18.2 8.9 7.1 19.9 13.5M28.1 13.5 39.1 7.1 36.4 18.2" stroke="#e6eaf3" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M30.6 8.1a7 7 0 1 0 6.7 10.7 7.2 7.2 0 0 1-6.7-10.7Z" fill="#ffdb6b"/>
+        <path d="m23.8 18.6 1.9 4.1 4.2 1.9-4.2 1.9-1.9 4.2-2-4.2-4.1-1.9 4.1-1.9 2-4.1Z" fill="#ffdb6b"/>
+        <path d="M17.5 27.4c1.5 3.2 4 4.9 6.5 4.9s5-1.7 6.5-4.9" stroke="#8a9bb8" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      <b>Open<br>Character Cards</b>
+    </a>
+    <nav class="nav"><a href="#">首页</a><a class="on" href="#">角色卡</a><a href="#">关于</a></nav>
+    <div class="search">
+      <svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg>
+      <span>搜索角色…</span>
+    </div>
+    <a class="gh" href="#"><svg viewBox="0 0 24 24"><path d="M9 19c-4.3 1.3-4.3-2.4-6-2.9M15 21v-3.4a3 3 0 0 0-.8-2.3c2.7-.3 5.5-1.3 5.5-6A4.7 4.7 0 0 0 18.4 6 4.3 4.3 0 0 0 18.3 3S17.2 2.7 15 4.2a12.7 12.7 0 0 0-6 0C6.8 2.7 5.7 3 5.7 3A4.3 4.3 0 0 0 5.6 6 4.7 4.7 0 0 0 4.3 9.3c0 4.7 2.8 5.7 5.5 6A3 3 0 0 0 9 17.6V21"/></svg></a>
+  </header>
+
+  <div class="gal">
+    <aside class="rail">
+      <h4>分 类</h4>
+      <nav class="cat">
+        <a class="on" href="#">全部 <em>8</em></a>
+        <a href="#">猫耳 <em>1</em></a>
+        <a href="#">精灵 <em>1</em></a>
+        <a href="#">人类 <em>4</em></a>
+        <a href="#">神明 <em>1</em></a>
+        <a href="#">其他 <em>1</em></a>
+      </nav>
+      <h4>标 签</h4>
+      <div class="chips">
+        <i class="on">全部</i><i>可爱</i><i>温柔</i><i>天然</i>
+        <i>高冷</i><i>元气</i><i>神秘</i><i>幻想</i>
+        <i>现代</i><i>战斗</i><i>日常</i>
+      </div>
+      <h4>排 序</h4>
+      <div class="sortbox">最新收录 <b>▾</b></div>
+      <div class="rail-foot">
+        <span>本仓库由社区共建<br>投稿即入 Git，永久留存</span>
+      </div>
+    </aside>
+
+    <div class="gal-main">
+      <div class="gal-head">
+        <div>
+          <h2>角色卡画廊</h2>
+          <p>共 8 个角色 · 持续更新中</p>
+        </div>
+        <div class="count">最后更新 2026-10-20</div>
+      </div>
+      <div class="grid4" style="margin-top:16px">
+        <article class="gcard"><div class="art"><img src="assets/cut/linke.png" alt=""></div>
+          <div class="tile-meta"><strong>林可</strong><div class="tags"><i>猫耳</i><i>萝莉</i></div></div></article>
+        <article class="gcard is-hover"><div class="art"><img src="assets/cut/elise.png" alt=""><div class="peek">查看角色卡 →</div></div>
+          <div class="tile-meta"><strong>艾莉丝</strong><div class="tags"><i>甜系</i><i>少女</i></div></div></article>
+        <article class="gcard"><div class="art"><img src="assets/cut/xingxi.png" alt=""></div>
+          <div class="tile-meta"><strong>星汐</strong><div class="tags"><i>观星</i><i>沉静</i></div></div></article>
+        <article class="gcard"><div class="art"><img src="assets/cut/yuejian.png" alt=""></div>
+          <div class="tile-meta"><strong>月见</strong><div class="tags"><i>和风</i><i>巫女</i></div></div></article>
+        <article class="gcard"><div class="art"><img src="assets/cut/tina.png" alt=""></div>
+          <div class="tile-meta"><strong>缇娜</strong><div class="tags"><i>精灵</i><i>元气</i></div></div></article>
+        <article class="gcard"><div class="art"><img src="assets/cut/bailing.png" alt=""></div>
+          <div class="tile-meta"><strong>白澪</strong><div class="tags"><i>冰系</i><i>冷淡</i></div></div></article>
+        <article class="gcard"><div class="art"><img src="assets/cut/xiachuan.png" alt=""></div>
+          <div class="tile-meta"><strong>夏川</strong><div class="tags"><i>学姐</i><i>日常</i></div></div></article>
+        <article class="gcard"><div class="art"><img src="assets/cut/lindong.png" alt=""></div>
+          <div class="tile-meta"><strong>凛冬</strong><div class="tags"><i>剑士</i><i>战斗</i></div></div></article>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 03 卡片详情 ============ -->
+<div class="frame" data-shot="03-detail" style="width:1440px;height:900px">
+  <div class="veil"></div>
+  <div class="veil-blob" style="left:100px;top:90px;width:232px;height:364px"></div>
+  <div class="veil-blob" style="left:356px;top:90px;width:232px;height:364px"></div>
+  <div class="veil-blob" style="left:100px;top:478px;width:232px;height:364px"></div>
+  <div class="veil-blob" style="left:356px;top:478px;width:232px;height:364px"></div>
+  <div class="veil-blob" style="right:100px;top:90px;width:232px;height:364px"></div>
+  <div class="veil-blob" style="right:356px;top:90px;width:232px;height:364px"></div>
+  <div class="stars" style="opacity:.5"></div>
+  <div class="veil-shade"></div>
+
+  <div class="modal">
+    <div class="modal-art">
+      <img src="assets/cut/linke.png" alt="林可">
+      <div class="modal-close">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="kick">CHARACTER ARCHIVE · 001</div>
+      <h2>林可</h2>
+      <div class="modal-tags"><i>猫耳</i><i>萝莉</i><i>日常</i><i>可爱</i></div>
+      <p class="sum">一只喜欢月亮的猫娘，性格温柔又有点天然。总是带着一只小黑猫，喜欢甜食和夜晚，会在月光最好的时候一个人溜到屋顶上。</p>
+      <dl class="facts">
+        <dt>世界观</dt><dd>原创角色</dd>
+        <dt>创作者</dt><dd>is0612</dd>
+        <dt>数据</dt><dd>PNG 内嵌 · 已解析</dd>
+        <dt>收录</dt><dd>2026-10-19</dd>
+      </dl>
+      <div class="modal-cta">
+        <a class="btn btn-gold" href="#">下载 PNG</a>
+        <a class="btn btn-line" href="#">收藏</a>
+        <span class="lic">CC BY-SA 4.0<br>请注明原作者</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 04 关于页 ============ -->
+<div class="frame" data-shot="04-about" style="width:1440px;height:900px">
+  <div class="stars"></div>
+  <header class="hd">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="25" r="16.4" fill="#0b1a33" stroke="#e6eaf3" stroke-width="1.8"/>
+        <path d="M11.6 18.2 8.9 7.1 19.9 13.5M28.1 13.5 39.1 7.1 36.4 18.2" stroke="#e6eaf3" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M30.6 8.1a7 7 0 1 0 6.7 10.7 7.2 7.2 0 0 1-6.7-10.7Z" fill="#ffdb6b"/>
+        <path d="m23.8 18.6 1.9 4.1 4.2 1.9-4.2 1.9-1.9 4.2-2-4.2-4.1-1.9 4.1-1.9 2-4.1Z" fill="#ffdb6b"/>
+        <path d="M17.5 27.4c1.5 3.2 4 4.9 6.5 4.9s5-1.7 6.5-4.9" stroke="#8a9bb8" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      <b>Open<br>Character Cards</b>
+    </a>
+    <nav class="nav"><a href="#">首页</a><a href="#">角色卡</a><a class="on" href="#">关于</a></nav>
+    <div class="search">
+      <svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg>
+      <span>搜索角色…</span>
+    </div>
+    <a class="gh" href="#"><svg viewBox="0 0 24 24"><path d="M9 19c-4.3 1.3-4.3-2.4-6-2.9M15 21v-3.4a3 3 0 0 0-.8-2.3c2.7-.3 5.5-1.3 5.5-6A4.7 4.7 0 0 0 18.4 6 4.3 4.3 0 0 0 18.3 3S17.2 2.7 15 4.2a12.7 12.7 0 0 0-6 0C6.8 2.7 5.7 3 5.7 3A4.3 4.3 0 0 0 5.6 6 4.7 4.7 0 0 0 4.3 9.3c0 4.7 2.8 5.7 5.5 6A3 3 0 0 0 9 17.6V21"/></svg></a>
+  </header>
+
+  <section class="about">
+    <div class="about-top">
+      <div class="about-copy">
+        <div class="kick">✦ ABOUT THE ARCHIVE</div>
+        <h2>关于本项目</h2>
+        <p class="lead">
+          Open Character Cards 是一个基于 GitHub 的<b>开源角色卡分享平台</b>。
+          每张角色卡就是一张 SillyTavern 格式的 PNG —— 人设、开场白、对话示例全部<b>内嵌在图片里</b>，
+          下载、导入酒馆，就能开始一段新的故事。
+        </p>
+        <p class="lead" style="margin-top:16px">
+          国内能好好放角色卡的地方太少，于是我们把它做成一个仓库：<b>投稿只需要传一张图</b>，
+          自动校验、自动上线、永久留存。不懂代码的人开 Issue，懂代码的人发 PR，两条路都通。
+        </p>
+      </div>
+      <div class="about-stats">
+        <div><b>8</b><span>已收录角色卡</span></div>
+        <div><b>MIT</b><span>源代码授权协议</span></div>
+        <div><b>100%</b><span>静态站点 · 无后端</span></div>
+      </div>
+    </div>
+
+    <div class="caps">
+      <article class="cap">
+        <span class="num">01</span>
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 8l7-5 7 5M4 21h16"/></svg></span>
+        <h3>开源免费</h3>
+        <p>代码 MIT 授权，角色卡按各自协议共享。没有会员、没有付费墙，所有资源永久可下载。</p>
+      </article>
+      <article class="cap">
+        <span class="num">02</span>
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M9 19c-4.3 1.3-4.3-2.4-6-2.9M15 21v-3.4a3 3 0 0 0-.8-2.3c2.7-.3 5.5-1.3 5.5-6A4.7 4.7 0 0 0 18.4 6 4.3 4.3 0 0 0 18.3 3S17.2 2.7 15 4.2a12.7 12.7 0 0 0-6 0C6.8 2.7 5.7 3 5.7 3A4.3 4.3 0 0 0 5.6 6 4.7 4.7 0 0 0 4.3 9.3c0 4.7 2.8 5.7 5.5 6A3 3 0 0 0 9 17.6V21"/></svg></span>
+        <h3>GitHub 托管</h3>
+        <p>图片即数据，仓库即数据库。每一版角色卡都留在提交历史里，不依赖任何一家的服务器。</p>
+      </article>
+      <article class="cap">
+        <span class="num">03</span>
+        <span class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.6 20a5.4 5.4 0 0 1 10.8 0"/><circle cx="17.4" cy="9.4" r="2.6"/><path d="M15.4 20a4.4 4.4 0 0 1 5.4-4.3"/></svg></span>
+        <h3>社区共建</h3>
+        <p>投稿、纠错、补充标签都欢迎。机器人负责校验与分流，维护者只处理边界情况。</p>
+      </article>
+    </div>
+
+    <div class="cta-bar">
+      <div>
+        <h4>想放一张自己的角色卡进来？</h4>
+        <p>开一个 Issue，把 PNG 拖进去 —— 其余交给流水线。</p>
+      </div>
+      <a class="btn btn-gold" href="#">前往 GitHub →</a>
+    </div>
+  </section>
+</div>
+
+<!-- ============ 05 首页下半屏 ============ -->
+<div class="frame" data-shot="05-guide" style="width:1440px;height:900px">
+  <div class="stars"></div>
+  <header class="hd">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="25" r="16.4" fill="#0b1a33" stroke="#e6eaf3" stroke-width="1.8"/>
+        <path d="M11.6 18.2 8.9 7.1 19.9 13.5M28.1 13.5 39.1 7.1 36.4 18.2" stroke="#e6eaf3" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M30.6 8.1a7 7 0 1 0 6.7 10.7 7.2 7.2 0 0 1-6.7-10.7Z" fill="#ffdb6b"/>
+        <path d="m23.8 18.6 1.9 4.1 4.2 1.9-4.2 1.9-1.9 4.2-2-4.2-4.1-1.9 4.1-1.9 2-4.1Z" fill="#ffdb6b"/>
+        <path d="M17.5 27.4c1.5 3.2 4 4.9 6.5 4.9s5-1.7 6.5-4.9" stroke="#8a9bb8" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+      <b>Open<br>Character Cards</b>
+    </a>
+    <nav class="nav"><a class="on" href="#">首页</a><a href="#">角色卡</a><a href="#">关于</a></nav>
+    <div class="search">
+      <svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg>
+      <span>搜索角色…</span>
+    </div>
+    <a class="gh" href="#"><svg viewBox="0 0 24 24"><path d="M9 19c-4.3 1.3-4.3-2.4-6-2.9M15 21v-3.4a3 3 0 0 0-.8-2.3c2.7-.3 5.5-1.3 5.5-6A4.7 4.7 0 0 0 18.4 6 4.3 4.3 0 0 0 18.3 3S17.2 2.7 15 4.2a12.7 12.7 0 0 0-6 0C6.8 2.7 5.7 3 5.7 3A4.3 4.3 0 0 0 5.6 6 4.7 4.7 0 0 0 4.3 9.3c0 4.7 2.8 5.7 5.5 6A3 3 0 0 0 9 17.6V21"/></svg></a>
+  </header>
+
+  <section class="guide">
+    <div class="sec-head">
+      <div class="kick">✦ HOW TO TAKE A CHARACTER HOME</div>
+      <h2>使用指南</h2>
+      <p>三步，把喜欢的角色带进你的故事。</p>
+    </div>
+
+    <div class="steps">
+      <article class="step">
+        <span class="no">01</span>
+        <span class="ic"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.3 4.3"/></svg></span>
+        <h3>挑选角色</h3>
+        <p>按名称、标签或分类找到喜欢的角色，先看看 TA 的故事再决定。</p>
+        <span class="ln"></span>
+      </article>
+      <article class="step">
+        <span class="no">02</span>
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg></span>
+        <h3>带走 PNG</h3>
+        <p>在详情里下载原始 PNG，角色设定完整保留在文件中，不丢一个字段。</p>
+        <span class="ln"></span>
+      </article>
+      <article class="step">
+        <span class="no">03</span>
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M20 11.5c0 4-3.6 7.2-8 7.2-1 0-2-.2-2.9-.5L4.5 20l1.4-3.8A6.9 6.9 0 0 1 4 11.5c0-4 3.6-7.2 8-7.2s8 3.2 8 7.2Z"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01"/></svg></span>
+        <h3>在酒馆开聊</h3>
+        <p>导入 SillyTavern 或其他兼容前端，就可以开始新的故事了。</p>
+        <span class="ln"></span>
+      </article>
+    </div>
+
+    <div class="tool">
+      <div class="tool-head">
+        <div>
+          <div class="kick">✦ LITTLE HELPER'S DESK</div>
+          <h3 style="margin-top:9px">角色卡工具箱</h3>
+          <p>把 PNG 内嵌的角色数据提取为 JSON；所有解析都在浏览器本地完成。</p>
+        </div>
+        <span class="pill">LOCAL · PRIVATE · OPEN SOURCE</span>
+      </div>
+      <div class="tool-body">
+        <div class="drop">
+          <svg viewBox="0 0 24 24"><path d="M12 16V4M7.5 8.5 12 4l4.5 4.5M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/></svg>
+          <b>把角色卡 PNG 拖进来</b>
+          <span>或点击选择文件 · 不上传服务器</span>
+        </div>
+        <div class="result">
+          <div class="row"><b>角色名</b><span>林可</span></div>
+          <div class="row"><b>简介</b><span>一只喜欢月亮的猫娘，性格温柔又有点天然…</span></div>
+          <div class="row"><b>标签</b><span>猫耳 · 萝莉 · 日常 · 可爱</span></div>
+          <div class="row"><b>世界观</b><span>原创角色</span></div>
+          <div class="row"><b>数据块</b><span>chara (base64) · 12.4 KB · 解析成功</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ 06 移动端 ============ -->
+<div class="frame" data-shot="06-mobile" style="width:390px;height:844px">
+  <header class="m-hd">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="25" r="16.4" fill="#0b1a33" stroke="#e6eaf3" stroke-width="1.8"/>
+        <path d="M11.6 18.2 8.9 7.1 19.9 13.5M28.1 13.5 39.1 7.1 36.4 18.2" stroke="#e6eaf3" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M30.6 8.1a7 7 0 1 0 6.7 10.7 7.2 7.2 0 0 1-6.7-10.7Z" fill="#ffdb6b"/>
+        <path d="m23.8 18.6 1.9 4.1 4.2 1.9-4.2 1.9-1.9 4.2-2-4.2-4.1-1.9 4.1-1.9 2-4.1Z" fill="#ffdb6b"/>
+      </svg>
+      <b>Open<br>Character Cards</b>
+    </a>
+    <div class="sp"></div>
+    <div class="ic"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg></div>
+    <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></div>
+  </header>
+
+  <section class="m-hero">
+    <div class="disc"></div>
+    <div class="stars" style="opacity:.8"></div>
+    <img src="assets/cut/linke.png" alt="林可">
+    <div class="fade"></div>
+  </section>
+
+  <div class="m-body">
+    <h1>Open Character Cards</h1>
+    <h2>开源的角色卡片分享平台</h2>
+    <p>发现更多有趣的角色，享受二次元的无限可能。</p>
+    <div class="m-cta">
+      <a class="btn btn-gold" href="#">浏览角色卡 →</a>
+      <a class="btn btn-ghost" href="#">GitHub</a>
+    </div>
+
+    <div class="m-feat">
+      <div class="head"><b>✦ 精选角色卡</b><span>查看全部 →</span></div>
+      <div class="m-grid">
+        <article class="tile"><div class="art"><img src="assets/cut/linke.png" alt=""></div>
+          <div class="tile-meta"><strong>林可</strong><div class="tags"><i>猫耳</i><i>萝莉</i></div></div></article>
+        <article class="tile"><div class="art"><img src="assets/cut/elise.png" alt=""></div>
+          <div class="tile-meta"><strong>艾莉丝</strong><div class="tags"><i>甜系</i><i>少女</i></div></div></article>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
