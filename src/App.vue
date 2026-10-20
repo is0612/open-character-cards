@@ -12,22 +12,9 @@ const loading = ref(true)
 const error = ref('')
 const selected = ref<ManifestCard | null>(null)
 const bannerLoaded = ref(false)
+const aboutMascotSrc = ref(base + 'images/moon_catgirl_dark_ui.png')
 const cardCount = computed(() => cards.value.length)
 
-const faqs = [
-  {
-    q: '角色卡是什么格式？',
-    a: '每张角色卡都是 SillyTavern 格式的 PNG，角色名、人设、开场白等完整数据内嵌在图片中。下载后导入酒馆即可使用。',
-  },
-  {
-    q: '我不会写代码，可以投稿吗？',
-    a: '可以。打开 GitHub 的角色卡投稿模板，填写基础信息并上传角色卡 PNG，后续导入由仓库工作流处理。',
-  },
-  {
-    q: '角色卡的授权如何确认？',
-    a: '请优先查看每张卡片标注的授权协议。未单独标注的内容按仓库说明处理，二次使用或转载前请核实原作者授权。',
-  },
-]
 
 async function loadCards() {
   try {
@@ -47,7 +34,7 @@ async function loadCards() {
   }
 }
 
-function probeTavernBanner() {
+function probeBanner() {
   const image = new Image()
   image.onload = () => {
     bannerLoaded.value = true
@@ -55,7 +42,15 @@ function probeTavernBanner() {
   image.onerror = () => {
     bannerLoaded.value = false
   }
-  image.src = base + 'images/moonlit-tavern-banner.svg'
+  image.src = base + 'images/banner.webp'
+}
+
+function probeAboutMascot() {
+  const image = new Image()
+  image.onload = () => {
+    aboutMascotSrc.value = base + 'images/about-mascot.png'
+  }
+  image.src = base + 'images/about-mascot.png'
 }
 
 function openCard(card: ManifestCard) {
@@ -68,7 +63,8 @@ function closeCard() {
 
 onMounted(() => {
   void loadCards()
-  probeTavernBanner()
+  probeBanner()
+  probeAboutMascot()
 })
 </script>
 
@@ -94,9 +90,9 @@ onMounted(() => {
         <div class="top-links">
           <a class="top-link-active" href="#top">首页</a>
           <a href="#gallery">角色卡</a>
-          <a href="#about">关于项目</a>
           <a href="#guide">使用指南</a>
           <a href="#tool">卡牌工具</a>
+          <a href="#about">关于项目</a>
           <a class="top-contribute" :href="REPO_URL + '/issues/new?template=card-submission.yml'" target="_blank" rel="noreferrer">投稿角色 <span aria-hidden="true">↗</span></a>
           <a class="github-link" :href="REPO_URL" target="_blank" rel="noreferrer" aria-label="在 GitHub 查看项目">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4.3 1.3-4.3-2.4-6-2.9M15 21v-3.4a3 3 0 0 0-.8-2.3c2.7-.3 5.5-1.3 5.5-6A4.7 4.7 0 0 0 18.4 6 4.3 4.3 0 0 0 18.3 3S17.2 2.7 15 4.2a12.7 12.7 0 0 0-6 0C6.8 2.7 5.7 3 5.7 3A4.3 4.3 0 0 0 5.6 6 4.7 4.7 0 0 0 4.3 9.3c0 4.7 2.8 5.7 5.5 6A3 3 0 0 0 9 17.6V21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -110,30 +106,17 @@ onMounted(() => {
         id="top"
         class="hero"
         :class="{ 'has-banner': bannerLoaded }"
-        :style="{ '--tavern-banner': 'url(' + base + 'images/moonlit-tavern-banner.svg)' }"
+        :style="{ '--tavern-banner': 'url(' + base + 'images/banner.webp)' }"
       >
-        <div class="tavern-fallback" aria-hidden="true">
-          <div class="tavern-window">
-            <div class="window-moon"></div>
-            <div class="window-tower tower-one"></div>
-            <div class="window-tower tower-two"></div>
-            <div class="window-tower tower-three"></div>
-            <span class="window-star star-one">✦</span><span class="window-star star-two">✧</span>
-          </div>
-          <div class="tavern-shelf shelf-back"></div>
-          <div class="tavern-shelf shelf-front"></div>
-          <div class="tavern-lantern lantern-left"><i></i></div>
-          <div class="tavern-lantern lantern-right"><i></i></div>
-          <div class="tavern-counter"></div>
-        </div>
+        
         <div class="hero-vignette" aria-hidden="true"></div>
         <div class="hero-inner">
           <div class="hero-copy">
-            <div class="eyebrow"><span class="eyebrow-star">✦</span> WELCOME TO THE MOONLIT TAVERN</div>
-            <h1>推开酒馆的门，<br><span>遇见新的故事。</span></h1>
-            <p class="hero-description">这里收藏着来自不同世界的角色。挑一张喜欢的角色卡，把 TA 带进 SillyTavern，开启属于你的下一段故事。</p>
+            <div class="eyebrow"><span class="eyebrow-star">✦</span> AN OPEN LIBRARY FOR STORYTELLERS</div>
+            <h1>Open Character Cards<br><span>开源的角色卡片分享平台</span></h1>
+            <p class="hero-description">发现更多有趣的角色，享受二次元的无限可能。这里汇集优质角色卡资源，让每一个角色都能被发现。</p>
             <div class="hero-actions">
-              <a class="button button-primary" href="#gallery">看看今晚的角色 <span aria-hidden="true">↘</span></a>
+              <a class="button button-primary" href="#gallery">浏览角色卡 <span aria-hidden="true">↘</span></a>
               <a class="button button-secondary" :href="REPO_URL" target="_blank" rel="noreferrer"><span class="github-mini" aria-hidden="true">⌘</span> 在 GitHub 查看</a>
             </div>
             <div class="hero-proof">
@@ -152,30 +135,6 @@ onMounted(() => {
           </div>
         </div>
         <div class="hero-bottomline"><span>OCC — OPEN CHARACTER CARDS</span><span>GOOD STORIES ARE ALWAYS ON THE HOUSE <b>✦</b></span></div>
-      </section>
-
-      <section id="about" class="about-section">
-        <div class="section-inner">
-          <div class="about-card">
-            <div class="about-copy">
-              <div class="section-kicker"><span>✦</span> ABOUT THIS PROJECT</div>
-              <h2>不只是收藏卡片，<br><span>也是故事的共同起点。</span></h2>
-              <p>Open Character Cards 是一个基于 GitHub 的开源角色卡分享项目。角色卡以 PNG 文件保存，完整数据内嵌在图片里；你可以在这里发现喜欢的角色，也可以把自己的创作分享给更多人。</p>
-              <a class="about-github" :href="REPO_URL" target="_blank" rel="noreferrer">了解项目与源代码 <span aria-hidden="true">↗</span></a>
-            </div>
-            <div class="about-features">
-              <article class="about-feature"><span class="feature-icon">⌕</span><div><strong>开放的角色档案</strong><small>按名称、简介和标签寻找角色</small></div></article>
-              <article class="about-feature"><span class="feature-icon">◈</span><div><strong>GitHub 托管</strong><small>文件与源代码公开可查</small></div></article>
-              <article class="about-feature"><span class="feature-icon">✧</span><div><strong>社区共同完善</strong><small>通过 Issue 投稿，或提交 PR</small></div></article>
-            </div>
-            <div class="about-mascot-wrap" aria-hidden="true">
-              <div class="about-moon"></div>
-              <span class="about-spark spark-a">✦</span><span class="about-spark spark-b">✧</span>
-              <img class="about-mascot" :src="base + 'images/moon_catgirl_dark_ui.png'" alt="" loading="lazy" />
-              <div class="mascot-label"><span>☾</span> THE TAVERN KEEPER</div>
-            </div>
-          </div>
-        </div>
       </section>
 
       <section id="gallery" class="section gallery-section">
@@ -200,7 +159,7 @@ onMounted(() => {
         </div>
       </section>
 
-      <section id="guide" class="section guide-section">
+      <section id="guide" class="section guide-tools-section">
         <div class="section-inner">
           <div class="section-heading compact-heading">
             <div><div class="section-kicker"><span>02</span> HOW TO TAKE A CHARACTER HOME</div><h2>把相遇，变成你的故事</h2><p>三步就好，酒馆已经为你准备好了。</p></div>
@@ -211,30 +170,43 @@ onMounted(() => {
             <article class="guide-card"><span class="guide-number">03</span><span class="guide-icon">✦</span><h3>在酒馆开聊</h3><p>将 PNG 导入 SillyTavern 或其他兼容前端，开始你的故事。</p><span class="guide-line"></span></article>
           </div>
         </div>
-      </section>
-
-      <section id="contribute" class="contribute-section">
-        <div class="contribute-inner">
-          <div class="contribute-seal" aria-hidden="true"><span>✦</span><i></i><b></b></div>
-          <div class="contribute-copy"><div class="section-kicker">03 / SHARE YOUR IMAGINATION</div><h2>下一张被遇见的角色卡，也许来自你。</h2><p>不懂代码也没关系，通过 GitHub Issue 上传角色卡 PNG，就能参与档案馆共建。</p></div>
-          <a class="button contribute-button" :href="REPO_URL + '/issues/new?template=card-submission.yml'" target="_blank" rel="noreferrer">分享一张角色卡 <span aria-hidden="true">↗</span></a>
-        </div>
-      </section>
-
-      <section id="tool" class="section tool-section">
-        <div class="section-inner">
-          <div class="section-heading compact-heading">
-            <div><div class="section-kicker"><span>04</span> LITTLE HELPER'S DESK</div><h2>角色卡工具箱</h2><p>处理角色卡时用得上的小工具，都放在这里。</p></div>
+      
+          <div id="tool" class="tool-panel">
+            <div class="tool-panel-heading">
+              <div>
+                <div class="section-kicker"><span>✦</span> LITTLE HELPER'S DESK</div>
+                <h3>角色卡工具箱</h3>
+                <p>把 PNG 内嵌的角色数据提取为 JSON；所有解析都在浏览器本地完成。</p>
+              </div>
+              <span class="tool-panel-note">LOCAL · PRIVATE · OPEN SOURCE</span>
+            </div>
+            <CardTool />
           </div>
-          <CardTool />
-        </div>
-      </section>
+</section>
 
-      <section id="faq" class="section faq-section">
-        <div class="section-inner faq-inner">
-          <div class="section-heading compact-heading"><div><div class="section-kicker"><span>05</span> A FEW QUESTIONS</div><h2>吧台边的几个小问题</h2></div></div>
-          <div class="faq-list">
-            <details v-for="faq in faqs" :key="faq.q" class="faq-item"><summary>{{ faq.q }}<span>＋</span></summary><p>{{ faq.a }}</p></details>
+      <section id="about" class="about-section">
+        <div class="section-inner">
+          <div class="about-card">
+            <div class="about-copy">
+              <div class="section-kicker"><span>✦</span> ABOUT THIS PROJECT</div>
+              <h2>每一张角色卡，<br><span>都是一个世界的入口。</span></h2>
+              <p>Open Character Cards 是一个基于 GitHub 的开源角色卡档案馆。角色卡以 PNG 文件保存，完整数据内嵌在图片里；你可以自由浏览、下载，也可以通过 Issue 或 Pull Request 一起完善这个项目。</p>
+              <div class="about-actions">
+                <a class="about-github" :href="REPO_URL" target="_blank" rel="noreferrer">在 GitHub 查看源代码 <span aria-hidden="true">↗</span></a>
+                <a class="about-submit" :href="REPO_URL + '/issues/new?template=card-submission.yml'" target="_blank" rel="noreferrer">投稿一张角色卡 <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+            <div class="about-features">
+              <article class="about-feature"><span class="feature-icon">⌕</span><div><strong>开放的角色档案</strong><small>按名称、简介和标签寻找角色</small></div></article>
+              <article class="about-feature"><span class="feature-icon">◈</span><div><strong>GitHub 托管</strong><small>文件与源代码公开可查</small></div></article>
+              <article class="about-feature"><span class="feature-icon">✧</span><div><strong>社区共同完善</strong><small>通过 Issue 投稿，或提交 PR</small></div></article>
+            </div>
+            <div class="about-mascot-wrap" aria-hidden="true">
+              <div class="about-moon"></div>
+              <span class="about-spark spark-a">✦</span><span class="about-spark spark-b">✧</span>
+              <img class="about-mascot" :src="aboutMascotSrc" alt="月下酒馆的猫娘吉祥物" loading="lazy" />
+              <div class="mascot-label"><span>☾</span> THE TAVERN KEEPER</div>
+            </div>
           </div>
         </div>
       </section>
@@ -276,25 +248,6 @@ onMounted(() => {
 .hero.has-banner{background-image:linear-gradient(90deg,rgba(7,12,25,.9) 0%,rgba(7,13,28,.78) 27%,rgba(7,13,28,.25) 57%,rgba(7,12,25,.08) 100%),linear-gradient(0deg,rgba(6,10,19,.72),transparent 24%,rgba(5,9,18,.08)),var(--tavern-banner);background-size:cover;background-position:center 48%}
 .hero-vignette{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(5,10,20,.7),transparent 27%),linear-gradient(90deg,rgba(7,12,24,.12),transparent 50%,rgba(4,8,16,.08))}
 .hero:not(.has-banner) .hero-vignette{background:radial-gradient(ellipse at 74% 40%,rgba(234,172,87,.07),transparent 37%),linear-gradient(0deg,rgba(5,10,20,.72),transparent 25%)}
-.tavern-fallback{position:absolute;z-index:0;inset:0;overflow:hidden;pointer-events:none;background:radial-gradient(ellipse at 76% 38%,rgba(255,190,103,.13),transparent 22%),linear-gradient(180deg,rgba(16,14,22,.16),transparent 46%,rgba(9,12,22,.5))}
-.tavern-fallback:before{content:"";position:absolute;inset:0 0 35% 0;background:repeating-linear-gradient(90deg,rgba(83,46,28,.18) 0 3px,transparent 3px 104px),linear-gradient(180deg,rgba(3,7,15,.3),transparent);border-bottom:1px solid rgba(219,178,103,.22)}
-.tavern-window{position:absolute;top:36px;right:8%;width:39%;height:410px;border:10px solid rgba(67,43,34,.58);border-bottom-width:18px;border-radius:48% 48% 8px 8px / 26% 26% 6px 6px;background:radial-gradient(circle at 50% 18%,rgba(244,204,130,.7) 0 3px,transparent 4px),radial-gradient(circle at 67% 36%,rgba(244,204,130,.8) 0 2px,transparent 3px),radial-gradient(circle at 19% 31%,rgba(244,204,130,.7) 0 2px,transparent 3px),linear-gradient(180deg,#14294d,#1c2b49 53%,#11182b);box-shadow:0 0 0 3px rgba(226,183,109,.09),inset 0 0 60px rgba(4,8,18,.72),0 0 80px rgba(0,0,0,.3)}
-.tavern-window:before{content:"";position:absolute;top:0;bottom:0;left:50%;width:10px;background:rgba(72,49,37,.72);box-shadow:-140px 0 rgba(72,49,37,.65),140px 0 rgba(72,49,37,.65)}
-.tavern-window:after{content:"";position:absolute;left:0;right:0;top:61%;height:9px;background:rgba(72,49,37,.8);box-shadow:0 7px 0 rgba(12,17,29,.2)}
-.window-moon{position:absolute;top:49px;left:calc(50% - 28px);width:56px;height:56px;border-radius:50%;background:#f7dca2;box-shadow:0 0 38px rgba(249,211,142,.38)}
-.window-moon:after{content:"";position:absolute;top:-9px;left:15px;width:55px;height:55px;border-radius:50%;background:#14294d}
-.window-tower{position:absolute;bottom:72px;width:36px;background:linear-gradient(90deg,#0a1224,#202a42,#0a1224);clip-path:polygon(0 100%,0 28%,22% 28%,22% 15%,36% 15%,50% 0,64% 15%,78% 15%,78% 28%,100% 28%,100% 100%)}
-.tower-one{height:165px;left:22%}.tower-two{height:228px;left:46%;width:52px}.tower-three{height:137px;right:16%}
-.window-star{position:absolute;color:#e8c982;text-shadow:0 0 14px rgba(232,201,130,.7)}
-.star-one{left:17%;top:92px;font-size:18px}.star-two{right:18%;top:150px;font-size:22px}
-.tavern-shelf{position:absolute;right:0;width:15%;height:150px;border-top:1px solid rgba(218,177,111,.27);border-bottom:8px solid rgba(94,55,32,.7);background:linear-gradient(180deg,rgba(57,37,31,.55),rgba(21,24,35,.35));box-shadow:0 10px 24px rgba(0,0,0,.16)}
-.shelf-back{top:0;right:0;width:16%;height:170px;background:repeating-linear-gradient(90deg,transparent 0 24px,rgba(244,183,97,.14) 24px 29px,transparent 29px 48px),linear-gradient(180deg,rgba(28,23,32,.7),rgba(57,36,27,.52));border-bottom:10px solid rgba(128,78,42,.54)}
-.shelf-front{top:180px;right:0;width:13%;height:115px;background:repeating-linear-gradient(90deg,transparent 0 15px,rgba(239,185,107,.2) 15px 19px,transparent 19px 34px),linear-gradient(180deg,rgba(32,27,37,.68),rgba(57,37,28,.5))}
-.tavern-lantern{position:absolute;top:7px;width:28px;height:43px;border:1px solid rgba(235,191,111,.55);border-radius:8px;background:linear-gradient(90deg,rgba(104,68,35,.6),rgba(253,203,112,.38),rgba(99,60,34,.6));box-shadow:0 0 30px rgba(243,172,75,.19)}
-.tavern-lantern:before{content:"";position:absolute;left:50%;bottom:100%;height:26px;width:1px;background:rgba(227,189,124,.45)}
-.tavern-lantern i{position:absolute;inset:6px 7px;background:rgba(255,224,156,.4);border-radius:50%;filter:blur(4px)}
-.lantern-left{right:31%;top:36px}.lantern-right{right:4%;top:52px;transform:scale(.85)}
-.tavern-counter{position:absolute;bottom:34px;left:0;right:0;height:71px;background:linear-gradient(180deg,rgba(133,82,47,.32),rgba(26,22,27,.88)),repeating-linear-gradient(0deg,rgba(234,183,112,.13) 0 1px,transparent 1px 17px);border-top:2px solid rgba(222,179,111,.28);box-shadow:0 -10px 30px rgba(0,0,0,.18)}
 .hero-inner{position:relative;z-index:2;width:min(1240px,calc(100% - 56px));min-height:570px;margin:0 auto;display:grid;grid-template-columns:1.02fr .98fr;align-items:center;gap:18px;padding:43px 0 42px}
 .hero-copy{position:relative;z-index:4;padding:22px 0 44px;max-width:620px}
 .eyebrow{display:inline-flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid rgba(222,190,131,.25);border-radius:999px;background:rgba(8,14,27,.5);font-size:9px;letter-spacing:.16em;color:#e4c98f;font-weight:750;margin-bottom:24px;backdrop-filter:blur(8px)}
@@ -334,9 +287,9 @@ onMounted(() => {
 .art-caption strong,.art-caption small{display:block}
 .art-caption strong{color:#f3dca8;font-size:9px;font-weight:750;letter-spacing:.13em}
 .art-caption small{color:#a9b7d0;margin-top:4px;font-size:10px}
-.hero.has-banner .hero-inner{grid-template-columns:1.02fr .98fr}
+.hero.has-banner .hero-inner{grid-template-columns:1fr}
 .hero.has-banner .hero-copy{max-width:570px}
-.hero.has-banner .tavern-fallback{display:none}
+.hero.has-banner .hero-art{display:none}
 .hero-bottomline{position:absolute;z-index:3;bottom:0;left:0;right:0;height:34px;padding:0 max(28px,calc((100% - 1240px)/2));display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(222,193,133,.18);color:#a5a8b6;font-size:8px;letter-spacing:.15em;background:linear-gradient(90deg,rgba(5,10,20,.48),rgba(5,10,20,.06))}
 .hero-bottomline b{padding-left:6px;color:#e7c67f;font-size:11px}
 .about-section{position:relative;padding:34px 0 10px;background:linear-gradient(180deg,#090f1e,#0d1424)}
@@ -431,4 +384,34 @@ onMounted(() => {
 @media(max-width:1080px){.topbar-inner,.hero-inner,.section-inner,.footer-inner{width:min(100% - 40px,900px)}.top-links{gap:14px}.brand{min-width:220px}.hero-inner{grid-template-columns:1fr .72fr;gap:0;min-height:540px}.hero h1{font-size:clamp(36px,5vw,52px)}.hero-art{min-height:470px}.hero-character{height:min(500px,calc(100% + 10px))}.art-window{transform:scale(.85);transform-origin:top center}.about-card{grid-template-columns:1fr .9fr;gap:20px}.about-mascot-wrap{display:none}.about-features{padding-left:20px}.about-copy h2{font-size:28px}.guide-grid{gap:12px}.guide-card{padding:20px}.guide-line{left:20px}.footer-inner{gap:18px}.footer-inner>p{max-width:310px}.footer-links{gap:12px}}
 @media(max-width:760px){.topbar-inner{height:66px;width:calc(100% - 28px)}.brand{min-width:0;gap:7px}.brand-mark{width:36px;height:36px}.brand-copy strong{font-size:10px;letter-spacing:.05em}.brand-copy small{font-size:9px}.top-links{gap:8px}.top-links>a:not(.top-contribute):not(.github-link){display:none}.top-links .top-contribute{padding:9px 10px;font-size:11px}.github-link{width:31px;height:31px}.hero{min-height:auto}.hero-inner{width:calc(100% - 36px);grid-template-columns:1fr;min-height:0;padding:44px 0 0}.hero-copy{padding:0 0 4px}.eyebrow{font-size:8px;letter-spacing:.12em;margin-bottom:19px}.hero h1{font-size:clamp(34px,9.5vw,47px);margin-bottom:17px}.hero-description{font-size:12px;line-height:1.9;max-width:480px}.hero-actions{margin-top:22px}.button{min-height:42px;padding:0 14px;font-size:11px}.hero-proof{margin-top:24px;gap:11px}.hero-proof>div{gap:7px}.proof-icon{width:27px;height:27px}.hero-proof strong{font-size:10px}.hero-proof small{font-size:9px}.hero-art{min-height:0;height:345px;margin-top:5px;overflow:hidden}.hero-character{height:360px;max-height:none;max-width:100%;margin:0 auto 0}.art-window{width:250px;height:285px;left:calc(50% - 125px);top:5px;transform:none}.art-window span{top:27px;right:35px;font-size:31px}.art-window i{height:105px}.art-window b{height:142px}.art-glow{bottom:54px;right:9%;width:180px;height:170px}.art-stars{height:120px}.art-stars b:nth-child(1){left:9%;top:35px}.art-stars b:nth-child(2){right:7%;top:68px}.art-stars b:nth-child(3){left:21%;top:4px}.art-stars b:nth-child(4){left:6%;top:95px}.art-stars b:nth-child(5){right:18%;top:8px}.art-caption{bottom:15px;right:0;padding:9px 11px}.hero.has-banner .hero-inner{min-height:490px;padding:53px 0 44px}.hero.has-banner .hero-copy{max-width:460px}.hero.has-banner{background-position:62% center}.hero-bottomline{position:relative;height:30px;padding:0 16px;font-size:7px;letter-spacing:.06em}.tavern-window{right:4%;width:60%;height:300px;top:22px}.shelf-back{width:20%;height:140px}.shelf-front{width:18%;top:150px}.tavern-lantern{transform:scale(.75)}.lantern-left{right:27%;top:20px}.lantern-right{right:2%;top:30px}.tavern-counter{bottom:29px;height:51px}.about-section{padding:20px 0 0}.section-inner{width:calc(100% - 30px)}.about-card{grid-template-columns:1fr;gap:22px;padding:24px 20px}.about-copy h2{font-size:26px}.about-copy p{font-size:11px}.about-features{padding:0;border-left:0;display:grid;grid-template-columns:1fr;gap:8px}.about-feature{padding:9px}.about-mascot-wrap{display:flex;min-height:160px;max-height:175px;margin-top:-8px}.about-mascot{max-height:190px}.about-moon{width:105px;height:105px;top:4px;right:calc(50% - 70px)}.about-spark{top:20px}.section{padding:55px 0}.section-heading{align-items:flex-start;margin-bottom:22px;gap:12px}.section-heading h2{font-size:27px}.section-heading p{font-size:11px;line-height:1.7}.section-kicker{font-size:8px;letter-spacing:.12em}.collection-count{gap:7px;padding:8px 10px;font-size:9px;white-space:nowrap}.collection-count strong{font-size:21px}.guide-grid{grid-template-columns:1fr}.guide-card{min-height:0;padding:18px 19px 21px}.guide-icon{width:37px;height:37px}.guide-card h3{margin-top:14px}.guide-card p{max-width:unset}.guide-line{left:19px}.contribute-inner{width:calc(100% - 34px);padding:27px 0;gap:14px;flex-wrap:wrap}.contribute-seal{flex-basis:48px;height:48px;font-size:19px}.contribute-copy{flex:1 1 calc(100% - 62px)}.contribute-copy h2{font-size:21px}.contribute-copy p{font-size:11px}.contribute-button{margin-left:62px;min-height:40px}.faq-section{padding-top:40px}.footer-inner{width:calc(100% - 30px);padding:24px 0;align-items:flex-start;flex-direction:column;gap:14px}.footer-inner>p{margin:0}.footer-links{flex-wrap:wrap}.footer-lastline{padding:0 14px;font-size:7px;letter-spacing:.06em}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+.tool-panel{margin-top:34px;padding:26px;border:1px solid rgba(222,193,133,.2);border-radius:16px;background:linear-gradient(140deg,rgba(24,32,48,.86),rgba(12,21,38,.92));box-shadow:0 14px 36px rgba(0,0,0,.14)}
+.tool-panel-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:20px}
+.tool-panel-heading h3{margin:0;color:#f3e8cf;font-family:Georgia,'Noto Serif SC','Songti SC',serif;font-size:22px;font-weight:700}
+.tool-panel-heading p{margin:8px 0 0;color:#a5b1c6;font-size:12px;line-height:1.8}
+.tool-panel-note{flex:none;padding:7px 10px;border:1px solid rgba(222,193,133,.18);border-radius:999px;color:#cfb57d;font-size:8px;letter-spacing:.14em}
+.tool-panel :deep(.tool-lead){color:#a5b1c6}
+.tool-panel :deep(.drop){background:rgba(6,13,26,.48);border-color:rgba(222,193,133,.24)}
+.tool-panel :deep(.drop-title){color:#f1e8d6}
+.tool-panel :deep(.meta h3){color:#edf3ff}
+.tool-panel :deep(.btn){color:#edf3ff;background:rgba(18,29,47,.9)}
+.tool-panel :deep(.btn--primary){background:#eac77f;border-color:#eac77f;color:#172137}
+.tool-panel :deep(.btn--primary:hover){background:#ffdf9b;color:#172137}
+.tool-panel :deep(.card){background:rgba(11,20,35,.92);border-color:rgba(222,193,133,.18)}
+.tool-panel :deep(.fields td){color:#c3cddd}
+.tool-panel :deep(.fields td:first-child){color:#8d9bb4}
+.tool-panel :deep(.raw){border-color:rgba(222,193,133,.15)}
+.about-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:15px}
+.about-actions .about-github{margin-top:0}
+.about-submit{display:inline-flex;align-items:center;gap:8px;color:#d5dcec;font-size:11px;text-decoration:none}
+.about-submit:hover{color:#ffe4a6}
+.about-section{padding:52px 0 58px}
+.hero.has-banner{min-height:clamp(430px,40vw,610px)}
+.hero.has-banner .hero-inner{grid-template-columns:1fr;min-height:clamp(396px,38vw,576px);padding-top:48px;padding-bottom:42px}
+.hero.has-banner .hero-copy{max-width:590px;padding-bottom:30px}
+.hero.has-banner .hero-art{display:none}
+.hero.has-banner .hero h1{font-size:clamp(35px,4vw,56px)}
+.hero:not(.has-banner) .hero-inner{grid-template-columns:1fr .98fr}
+@media(max-width:1080px){.tool-panel{padding:22px}.tool-panel-heading h3{font-size:20px}}
+@media(max-width:760px){.tool-panel{margin-top:26px;padding:18px 14px}.tool-panel-heading{align-items:flex-start;flex-direction:column;gap:10px}.tool-panel-heading h3{font-size:19px}.tool-panel-note{font-size:7px}.hero.has-banner{background-position:62% center;min-height:470px}.hero.has-banner .hero-inner{min-height:436px;padding:42px 0 38px}.hero.has-banner .hero-copy{max-width:440px}.about-actions{gap:14px}}
 </style>

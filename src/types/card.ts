@@ -46,6 +46,8 @@ export interface ManifestCard extends CardMeta {
   png: string
   /** 从 PNG 解析出的角色名（若有） */
   parsedName?: string
+  /** 从 Git 历史读取的首次收录时间（ISO 8601；无历史时为空） */
+  addedAt?: string
   /** 是否有内嵌角色卡数据 */
   hasEmbeddedData: boolean
 }

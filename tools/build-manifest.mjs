@@ -12,6 +12,7 @@
 import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync, rmSync } from 'node:fs'
 import { join, dirname, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { execFileSync } from 'node:child_process'
 import { extractCardData, resolveName } from './parse-png.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -21,6 +22,17 @@ const OUT_DIR = join(ROOT, 'public', 'data')
 const OUT_FILE = join(OUT_DIR, 'manifest.json')
 // 卡片 PNG 需要被站点直接访问，复制一份到 public/cards（构建时进 dist）
 const PUBLIC_CARDS_DIR = join(ROOT, 'public', 'cards')
+
+function getFirstAddedAt(pngFile) {
+  try {
+    const history = execFileSync('git', ['log', '--diff-filter=A', '--follow', '--format=%cI', '--', 'cards/' + pngFile],
+      { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()
+    return history.split(/\r?\n/).filter(Boolean)[0] || ''
+  } catch {
+    // In shallow archives or source exports there may be no Git history.
+    return ''
+  }
+}
 
 function main() {
   if (!existsSync(CARDS_DIR)) {
@@ -64,6 +76,7 @@ function main() {
     cards.push({
       id,
       png: `cards/${pngFile}`,
+      addedAt: getFirstAddedAt(pngFile),
       name: meta.name || parsedName || id,
       summary: meta.summary || '',
       tags: meta.tags || [],
@@ -76,7 +89,12 @@ function main() {
     })
   }
 
-  cards.sort((a, b) => a.name.localeCompare(b.name, 'zh'))
+  cards.sort((a, b) => {
+    if (a.addedAt && b.addedAt && a.addedAt !== b.addedAt) return b.addedAt.localeCompare(a.addedAt)
+    if (a.addedAt && !b.addedAt) return -1
+    if (!a.addedAt && b.addedAt) return 1
+    return a.name.localeCompare(b.name, 'zh')
+  })
 
   const manifest = {
     version: 1,

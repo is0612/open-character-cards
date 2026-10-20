@@ -587,7 +587,7 @@ function onDragLeave(e: DragEvent): void {
 .drop-title {
   font-size: 16px;
   font-weight: 600;
-  color: $color-primary;
+  color: $color-text;
   margin-bottom: 6px;
 }
 
@@ -648,7 +648,7 @@ function onDragLeave(e: DragEvent): void {
     margin: 0 0 3px;
     font-size: $fs-card-title;
     font-weight: 600;
-    color: $color-primary;
+    color: $color-text;
     word-break: break-all;
   }
 }
@@ -712,7 +712,7 @@ function onDragLeave(e: DragEvent): void {
   border-radius: $radius-sm;
   border: 1px solid $color-border;
   background: $color-surface;
-  color: $color-primary;
+  color: $color-text;
   cursor: pointer;
   white-space: nowrap;
   transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
@@ -725,11 +725,11 @@ function onDragLeave(e: DragEvent): void {
   &--primary {
     background: $color-accent;
     border-color: $color-accent;
-    color: #fff;
+    color: #0b1225;
 
     &:hover {
       background: color-mix(in srgb, $color-accent 90%, black);
-      color: #fff;
+      color: #0b1225;
     }
   }
 }
