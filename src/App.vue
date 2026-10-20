@@ -141,13 +141,13 @@ onMounted(() => {
         <div class="section-inner">
           <div class="section-heading">
             <div>
-              <div class="section-kicker"><span>01</span> TONIGHT'S CHARACTER SHELF</div>
-              <h2>今晚，想遇见谁？</h2>
-              <p>挑选一张角色卡，带着 TA 进入你的故事。</p>
+              <div class="section-kicker"><span>01</span> LATEST CHARACTER CARDS</div>
+              <h2>最新角色卡</h2>
+              <p>从档案馆找到下一位伙伴，把 TA 带进你的故事。</p>
             </div>
             <div class="collection-count"><strong>{{ cardCount.toString().padStart(2, '0') }}</strong><span>张已收录角色卡</span></div>
           </div>
-          <p v-if="loading" class="status-message"><span class="status-spinner"></span>正在整理酒馆的角色档案…</p>
+          <p v-if="loading" class="status-message"><span class="status-spinner"></span>正在整理角色档案…</p>
           <div v-else-if="error" class="empty-notice">
             <span class="notice-icon">☾</span><strong>档案暂时不可用</strong><p>{{ error }}</p>
           </div>
