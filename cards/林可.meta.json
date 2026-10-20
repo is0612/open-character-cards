@@ -1,9 +1,14 @@
 {
   "name": "林可",
-  "summary": "",
-  "tags": [],
+  "summary": "一只喜欢月亮的猫娘，性格温柔又有点天然，总是带着一只小黑猫。",
+  "tags": [
+    "猫耳",
+    "萝莉",
+    "日常",
+    "可爱"
+  ],
+  "category": "猫耳",
   "author": "is0612",
-  "world": "",
-  "license": "CC BY-SA 4.0",
-  "issueUrl": "https://github.com/is0612/open-character-cards/issues/1"
+  "world": "原创角色",
+  "license": "CC BY-SA 4.0"
 }
