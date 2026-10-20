@@ -131,3 +131,46 @@ export function resolveDescription(card) {
 
   return candidates.find((value) => typeof value === 'string' && value.trim())
 }
+
+/** 将单个标签字段规范成去重后的字符串数组。 */
+function normalizeTags(value) {
+  let list = []
+
+  if (Array.isArray(value)) {
+    list = value
+  } else if (typeof value === 'string') {
+    // 少数工具会把标签写成逗号分隔的字符串。
+    list = value.split(/[,，、|]/)
+  } else {
+    return []
+  }
+
+  const seen = new Set()
+  const tags = []
+  for (const item of list) {
+    if (typeof item !== 'string') continue
+    const tag = item.trim()
+    if (!tag || seen.has(tag)) continue
+    seen.add(tag)
+    tags.push(tag)
+  }
+  return tags
+}
+
+/** 从解析出的角色卡数据中提取标签（SillyTavern V2 的 data.tags 优先）。 */
+export function resolveTags(card) {
+  if (!card || typeof card !== 'object') return []
+
+  const candidates = [
+    card.data?.tags,
+    card.tags,
+    card.character?.tags,
+  ]
+
+  for (const candidate of candidates) {
+    const tags = normalizeTags(candidate)
+    if (tags.length) return tags
+  }
+
+  return []
+}

@@ -13,7 +13,7 @@ import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync, copyFi
 import { join, dirname, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { execFileSync } from 'node:child_process'
-import { extractCardData, resolveName } from './parse-png.mjs'
+import { extractCardData, resolveName, resolveTags } from './parse-png.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -62,16 +62,23 @@ function main() {
 
     // 2. 解析 PNG 内嵌数据
     let parsedName
+    let parsedTags = []
     let hasEmbeddedData = false
     try {
       const cardData = extractCardData(pngPath)
       if (cardData) {
         hasEmbeddedData = true
         parsedName = resolveName(cardData)
+        parsedTags = resolveTags(cardData)
       }
     } catch (e) {
       console.warn(`PNG 解析失败（忽略）：${pngPath}`, e.message)
     }
+
+    const metaTags = resolveTags({ tags: meta.tags })
+    // 标签优先取角色卡自身数据；没有内嵌标签时才用 meta.json 兜底。
+    const tags = parsedTags.length ? parsedTags : metaTags
+    const category = (typeof meta.category === 'string' && meta.category.trim()) || tags[0] || ''
 
     cards.push({
       id,
@@ -79,7 +86,8 @@ function main() {
       addedAt: getFirstAddedAt(pngFile),
       name: meta.name || parsedName || id,
       summary: meta.summary || '',
-      tags: meta.tags || [],
+      tags,
+      category,
       author: meta.author,
       world: meta.world,
       license: meta.license || 'CC BY-SA 4.0',

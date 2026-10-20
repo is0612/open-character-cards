@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readPngTextChunks } from './parse-png.mjs'
+import { readPngTextChunks, resolveTags } from './parse-png.mjs'
 
 const signature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
 
@@ -33,4 +33,20 @@ test('rejects a chunk whose declared length exceeds the file boundary', () => {
 
 test('rejects PNG files without an IEND chunk', () => {
   assert.throws(() => readPngTextChunks(png(chunk('tEXt', Buffer.from('key\0value')))), /缺少 IEND/)
+})
+
+test('reads tags from SillyTavern V2 card data', () => {
+  assert.deepEqual(
+    resolveTags({ spec: 'chara_card_v2', data: { tags: ['猫耳', ' 萝莉 ', '', '猫耳', 3] } }),
+    ['猫耳', '萝莉'],
+  )
+})
+
+test('falls back to comma-separated tags', () => {
+  assert.deepEqual(resolveTags({ tags: '校园, 日常，治愈' }), ['校园', '日常', '治愈'])
+})
+
+test('returns an empty list when tags are missing', () => {
+  assert.deepEqual(resolveTags(null), [])
+  assert.deepEqual(resolveTags({ data: {} }), [])
 })

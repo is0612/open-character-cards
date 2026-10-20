@@ -28,8 +28,10 @@ export interface CardMeta {
   name: string
   /** 一句话简介（列表页展示用） */
   summary: string
-  /** 标签 */
+  /** 标签（列表页展示与筛选；通常从 PNG 内嵌的 data.tags 自动解析） */
   tags: string[]
+  /** 分类（可选；缺省时取第一个标签，仅用于侧边栏单选项） */
+  category?: string
   /** 投稿者 / 作者 */
   author?: string
   /** 所属世界观 */
