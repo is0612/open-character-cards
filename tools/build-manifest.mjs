@@ -76,8 +76,8 @@ function main() {
     }
 
     const metaTags = resolveTags({ tags: meta.tags })
-    // 标签优先取角色卡自身数据；没有内嵌标签时才用 meta.json 兜底。
-    const tags = parsedTags.length ? parsedTags : metaTags
+    // 展示标签（meta）优先，PNG 内嵌标签补充；两边都没有时为空。
+    const tags = [...new Set([...metaTags, ...parsedTags])]
     const category = (typeof meta.category === 'string' && meta.category.trim()) || tags[0] || ''
 
     cards.push({

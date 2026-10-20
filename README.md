@@ -112,7 +112,7 @@ git push origin main
 PNG 本身已包含完整角色卡数据（角色名、人设、开场白、标签等），无需单独提供 JSON。平台会：
 
 1. 自动读取 PNG 的 `tEXt` 元数据块，解析出角色名、标签等信息；
-2. 标签优先使用 PNG 内嵌的 `data.tags`，没有时才用 meta.json 的 `tags` 兜底；
+2. 合并 PNG 内嵌的 `data.tags` 和 meta.json 的 `tags`，meta 标签排在前面用于展示；
 3. 结合 meta.json（若有）补全列表页展示所需的名称、简介等。
 
 > Git 的 tag 是版本标记（如 `v1.0`），不是角色卡标签；GitHub topics 也只属于仓库本身。
@@ -124,7 +124,7 @@ meta.json 字段（全部可选，不提供则自动解析）：
 |---|---|
 | `name` | 角色名（缺省时从 PNG 自动解析） |
 | `summary` | 一句话简介 |
-| `tags` | 兜底标签数组（PNG 内嵌 `data.tags` 优先） |
+| `tags` | 展示标签数组（会与 PNG 内嵌 `data.tags` 合并） |
 | `category` | 侧边栏「分类」用的单选值；缺省时取第一个标签 |
 | `author` | 投稿者/作者 |
 | `world` | 所属世界观 |
